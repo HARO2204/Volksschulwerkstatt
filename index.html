@@ -1489,10 +1489,10 @@ T({id:'d-lesen-verstehen',fach:'D',stufen:[1,2,3,4],t:'Lesen und verstehen',info
   {...opt('teil','Blätter',[['z','Text und Aufgaben zusammen'],['t','nur der Text'],['a','nur die Aufgaben']],'z'),when:['alle','mc','tf','ord']},
   {...opt('zn','Text',[['n','als Fließtext'],['j','Satz für Satz nummeriert']],'n'),when:['alle','mc','tf','ord']}],
  def:{1:{tx:'0'},2:{tx:'3'},3:{tx:'6'},4:{tx:'9'}},
- blatt(o,s,k){const fs=k<=1?3.4:k===2?3.1:2.85;
+ blatt(o,s,k){const fs=(k<=1?3.4:k===2?3.1:2.85)*(s<0.9?.9:1);
   if(o.art==='male'){const n=sz(s,6,3,2),cols=shuffle(Object.keys(LMFARBE)),teile=shuffle(LMTEIL).slice(0,Math.min(n,4)),neu=shuffle(LMNEU).slice(0,n-teile.length),col={};
     const auf=[...teile.map(([t,id],i)=>{const c=cols[i%cols.length];col[id]=LMFARBE[c];return `Male ${t} ${c} an.`}),...neu.map(([w,wo])=>`Male ${w} ${wo}.`)];
-    return {title:'Lies und male',anw:'Lies genau. Male dann das Bild an.',html:`<ol style="margin:0;padding-left:5cqw;font-size:${fs}cqw;line-height:1.55;display:flex;flex-direction:column;gap:.6cqw">${shuffle(auf).map(a=>`<li>${a}</li>`).join('')}</ol><div style="position:relative">${lmSVG({})}<div class="sol" style="position:absolute;inset:0">${lmSVG(col)}</div></div>`}}
+    return {title:'Lies und male',anw:'Lies genau. Male dann das Bild an.',html:`<ol style="margin:0;padding-left:5cqw;font-size:${fs}cqw;line-height:1.55;display:flex;flex-direction:column;gap:.6cqw">${shuffle(auf).map(a=>`<li>${a}</li>`).join('')}</ol><div style="position:relative;width:${sz(s,100,78,46)}%;margin:0 auto">${lmSVG({})}<div class="sol" style="position:absolute;inset:0">${lmSVG(col)}</div></div>`}}
   if(o.art==='uns'){const n=sz(s,14,7,4),nu=Math.max(1,Math.round(n*.35)),it=shuffle([...shuffle(UNSINN.s).slice(0,n-nu).map(t=>[t,0]),...shuffle(UNSINN.u).slice(0,nu).map(t=>[t,1])]);
     return {title:'Unsinnssätze',anw:'Lies jeden Satz. Ist er Unsinn? Dann streiche ihn durch.',html:`<div style="display:flex;flex-direction:column;gap:2cqw;font-size:${fs}cqw;flex:1;justify-content:space-evenly">${it.map(([t,u])=>`<div style="position:relative;display:inline-block;width:max-content;max-width:100%">${t}${u?`<span class="sol" style="position:absolute;left:-1cqw;right:-1cqw;top:50%;border-top:.45cqw solid #d9432f"></span>`:''}</div>`).join('')}</div>`}}
   if(o.art==='trep'){const n=sz(s,3,2,1),it=shuffle(TREPPEN).slice(0,n);
@@ -1501,16 +1501,32 @@ T({id:'d-lesen-verstehen',fach:'D',stufen:[1,2,3,4],t:'Lesen und verstehen',info
   const sentences=txt.match(/[^.!?„“]+(?:[.!?](?:“)?|„[^“]*“[^.!?]*[.!?])/g)||[txt];
   const textBox=()=>{const body=o.zn==='j'?`<div style="display:grid;grid-template-columns:4cqw 1fr;gap:.2cqw 1.4cqw">${sentences.map((x,i)=>`<span style="color:#9aa3b5;font-size:.7em;text-align:right">${i+1}</span><span>${x.trim()}</span>`).join('')}</div>`:txt;
     return `<div style="background:#fbfaf5;border:.25cqw solid #e7e2cf;border-radius:1.4cqw;padding:2cqw 2.6cqw;font-size:${fs}cqw;line-height:1.6"><div style="font-family:var(--font-d);font-weight:800;font-size:1.25em;margin-bottom:.6cqw">${tit}</div>${body}</div>`};
-  const mc=()=>`<div style="display:flex;flex-direction:column;gap:1.8cqw;font-size:${fs*.92}cqw">${Q.map((q,i)=>{const opts=shuffle(q.slice(1).map((a,j)=>[a,j===0]));return `<div><b>${i+1}. ${q[0]}</b><div style="display:flex;flex-wrap:wrap;gap:.6cqw 3cqw;margin-top:.6cqw">${opts.map(([a,r])=>`<span style="display:inline-flex;align-items:center;gap:1cqw"><span style="width:2.6cqw;height:2.6cqw;border:.25cqw solid #5b6578;border-radius:.4cqw;display:inline-flex;align-items:center;justify-content:center;flex:none">${r?sol('✗'):''}</span>${a}</span>`).join('')}</div></div>`}).join('')}</div>`;
+  const mc=(QQ=Q)=>`<div style="display:flex;flex-direction:column;gap:1.8cqw;font-size:${fs*.92}cqw">${QQ.map((q,i)=>{const opts=shuffle(q.slice(1).map((a,j)=>[a,j===0]));return `<div><b>${i+1}. ${q[0]}</b><div style="display:flex;flex-wrap:wrap;gap:.6cqw 3cqw;margin-top:.6cqw">${opts.map(([a,r])=>`<span style="display:inline-flex;align-items:center;gap:1cqw"><span style="width:2.6cqw;height:2.6cqw;border:.25cqw solid #5b6578;border-radius:.4cqw;display:inline-flex;align-items:center;justify-content:center;flex:none">${r?sol('✗'):''}</span>${a}</span>`).join('')}</div></div>`}).join('')}</div>`;
   const tf=()=>`<table class="t" style="font-size:${fs*.9}cqw"><tr><th style="text-align:left">Aussage</th><th style="width:13%">richtig</th><th style="width:13%">falsch</th></tr>${shuffle(TF).map(([t,w])=>`<tr><td style="text-align:left">${t}</td><td>${w?sol('✗'):''}</td><td>${w?'':sol('✗')}</td></tr>`).join('')}</table>`;
   const ord=()=>{const sh=shuffle(ORD.map((t,i)=>[t,i]));return `<div style="display:flex;flex-direction:column;gap:1.4cqw;font-size:${fs*.92}cqw">${sh.map(([t,i])=>`<div style="display:flex;align-items:center;gap:1.6cqw">${box(i+1)}<span>${t}</span></div>`).join('')}</div>`};
   const A={mc:['Lies den Text. Kreuze die richtige Antwort an.',mc],tf:['Lies den Text. Ist die Aussage richtig oder falsch? Kreuze an.',tf],ord:['Lies den Text. In welcher Reihenfolge passiert es? Nummeriere.',ord]};
+  // Platz schätzen (in cqw), damit nichts abgeschnitten wird
+  const budget=sz(s,108,44,23)/0.64,cpl=f=>88/(f*.57),L=(t,f)=>Math.ceil(t.length/cpl(f));
+  const hText=(o.zn==='j'?sentences.reduce((a,x)=>a+L(x,fs),0):L(txt,fs))*fs*1.6+fs*2+5;
+  const hQ=q=>{const f=fs*.92;return f*1.5*L(q[0],f)+f*1.5*Math.max(1,Math.ceil(q.slice(1).join('    ').length/cpl(f)))+1.8};
+  const H={mc:n=>Q.slice(0,n).reduce((a,q)=>a+hQ(q),0),tf:()=>TF.reduce((a,x)=>a+fs*.9*1.35*L(x[0],fs*1.4)+2.2,0)+5,ord:()=>ORD.reduce((a,x)=>a+fs*.92*1.45*L(x,fs*1.1)+1.4,0)};
+  const zuLang=`<div style="border:.3cqw dashed #d9432f;border-radius:1.4cqw;padding:3cqw;font-size:3cqw;color:#1d2433"><b>Dieser Text ist für dieses kleine Format zu lang.</b><br>Bitte wähle oben bei „Format“ ½ A4 oder A4 ganz.</div>`;
+  if(o.teil==='t'&&hText>budget*.85)return {title:tit,anw:'',html:zuLang,hinweis:'Der Text passt nicht in dieses Format.'};
   if(o.teil==='t')return {title:tit,anw:'Lies den Text genau. Lies ihn zweimal.',html:textBox()};
-  const parts=o.art==='alle'?(s>0.9?(o.teil==='a'?['mc','tf','ord']:k<=2?['mc','tf']:['mc']):['mc']):[o.art];
-  const tasks=parts.length>1?parts.map(p=>`<div class="ws-sub">${A[p][0].replace('Lies den Text. ','')}</div>${A[p][1]()}`).join(''):A[parts[0]][1]();
+  let used=o.teil==='a'?0:hText;
+  if(o.teil!=='a'&&used>budget*.85)return {title:tit,anw:'',html:zuLang,hinweis:'Der Text passt nicht in dieses Format.'};
+  const want=o.art==='alle'?(s>0.9?(o.teil==='a'?['mc','tf','ord']:k<=2?['mc','tf']:['mc']):['mc']):[o.art];
+  const parts=[];let nmc=Q.length;
+  for(const p of want){const sub=want.length>1?6:0;if(p==='mc'){let n=Q.length;while(n>1&&used+H.mc(n)+sub>budget)n--;if(used+H.mc(n)+sub<=budget||!parts.length){parts.push(p);nmc=n;used+=H.mc(n)+sub}}
+    else{const h=H[p]()+sub;if(used+h<=budget){parts.push(p);used+=h}}}
+  const QQ=Q.slice(0,nmc);
+  const tasks=!parts.length?'':parts.length>1?parts.map(p=>`<div class="ws-sub">${A[p][0].replace('Lies den Text. ','')}</div>${A[p][1](QQ)}`).join(''):A[parts[0]][1](QQ);
+  if(!parts.length&&o.teil==='a')return {title:tit,anw:'',html:zuLang.replace('Dieser Text ist','Diese Aufgabe ist'),hinweis:'Die Aufgabe passt nicht in dieses Format.'};
+  if(!parts.length){return {title:tit,anw:'Lies den Text genau. Lies ihn zweimal.',html:textBox(),hinweis:'Für Aufgaben ist in diesem Format kein Platz. Mit „Blätter: nur die Aufgaben“ bekommst du sie als eigenes Blatt.'}}
   const anw=parts.length>1?'Lies den Text. Löse dann die Aufgaben.':A[parts[0]][0];
+  const fehlt=want.filter(p=>!parts.includes(p)).length||nmc<Q.length;
   if(o.teil==='a')return {title:tit,anw:anw.replace('Lies den Text.','Lies den Text auf dem Textblatt.'),html:tasks};
-  return {title:tit,anw,html:textBox()+tasks,hinweis:o.art==='alle'&&s>0.9?'Auf diesem Blatt: Text und '+(k<=2?'zwei Aufgaben':'Fragen')+'. Alle Aufgaben (auch Reihenfolge) bekommst du mit „Blätter: nur die Aufgaben“ als eigenes Blatt.':''}},
+  return {title:tit,anw,html:textBox()+tasks,hinweis:fehlt?'Nicht alle Aufgaben haben in diesem Format Platz. Alle Aufgaben bekommst du mit „Blätter: nur die Aufgaben“.':o.art==='alle'&&s>0.9?'Auf diesem Blatt: Text und '+(k<=2?'zwei Aufgaben':'Fragen')+'. Alle Aufgaben (auch Reihenfolge) bekommst du mit „Blätter: nur die Aufgaben“ als eigenes Blatt.':''}},
  tafel(st,ctx){let ti=LTX.findIndex(t=>t[1]===ctx.stufe);if(ti<0)ti=0;let shown=0,qi=-1;
   st.innerHTML=`<div class="ctl"><select class="btn" id="lt-sel">${LTX.map((t,i)=>`<option value="${i}">${t[1]}. Kl.: ${t[0]}</option>`).join('')}</select><button class="btn pri" data-a="next">Nächster Satz</button><button class="btn" data-a="all">Ganzer Text</button><button class="btn" data-a="q">Frage stellen</button></div><div class="canvas col" style="align-items:stretch"><div class="lt" style="font-size:1.25em;line-height:1.7;text-align:left;max-width:46em;margin:0 auto"></div><div class="lq" style="text-align:center"></div></div>`;
   const sel=st.querySelector('#lt-sel');sel.value=ti;
