@@ -1154,6 +1154,7 @@ T({id:'d-eigen',fach:'D',stufen:[1,2,3,4],t:'Eigene Sätze',info:'Schreib deine 
   opt('schrift','Schrift',[['s','Schreibschrift'],['d','Druckschrift']],'s'),
   opt('zeilen','Zeilen pro Satz',[['vnl','Vorlage, nachspuren, selbst schreiben'],['vn','Vorlage und nachspuren'],['vl','Vorlage und selbst schreiben'],['vll','Vorlage und 2 leere Zeilen'],['n','nur nachspuren']],'vnl'),
   opt('gr','Schriftgröße',[['g','groß'],['m','mittel'],['k','klein']],'m'),
+  opt('rest','Platz unten',[['j','mit leeren Zeilen auffüllen'],['n','frei lassen']],'j'),
   opt('hilfe','Spurhilfe',[['grau','grau'],['hohl','gepunktet / Umriss']],'grau'),
   opt('blatt','Blatt (bei langen Texten)',[['1','Blatt 1'],['2','Blatt 2'],['3','Blatt 3'],['4','Blatt 4']],'1')],def:{1:{schrift:'d',gr:'g'}},
  blatt(o,s){const cur=o.schrift!=='d',W=Math.round(900/({g:1,m:.8,k:.66}[o.gr]||.8)),g=sGeo(W);
@@ -1161,10 +1162,11 @@ T({id:'d-eigen',fach:'D',stufen:[1,2,3,4],t:'Eigene Sätze',info:'Schreib deine 
   const lines=wrapText(o.txt||'',fits);
   const row=(t,m)=>cur?`<div>${sSvg(g,t?sText(t,12,g,m):'')}</div>`:`<div>${lineatur(t||'',m==='solid'?'solid':m==='none'?'':'trace',W)}</div>`;
   const plan={vnl:['solid','trace','none'],vn:['solid','trace'],vl:['solid','none'],vll:['solid','none','none'],n:['trace','trace']}[o.zeilen];
-  const rowH=cur?g.H/g.W*90:120/W*90,per=Math.max(1,Math.floor((AVAIL(s)+2)/(plan.length*(rowH+.5)+2.5)));
+  const rowH=cur?g.H/g.W*90:120/W*90,AV=sz(s,114,53,30),GAP=2.2,per=Math.max(1,Math.floor((AV+GAP)/(plan.length*(rowH+.5)+GAP)));
   const pages=Math.max(1,Math.ceil(lines.length/per)),bi=Math.min(+o.blatt||1,pages)-1,mine=lines.slice(bi*per,bi*per+per);
   const H=o.hilfe==='hohl'?'hohl':'grau';
-  const html=mine.length?`<div style="display:flex;flex-direction:column;gap:${cur?'.6':'1'}cqw;flex:1;justify-content:space-evenly">${mine.map(t=>`<div style="display:flex;flex-direction:column;gap:.5cqw">${plan.map(m=>row(m==='none'?'':t,m==='trace'?(cur?H:'trace'):m)).join('')}</div>`).join('')}</div>`:'<p style="color:#5b6578">Schreib oben deine Sätze in das Feld.</p>';
+  const used=mine.length*(plan.length*(rowH+.5)+GAP),extra=o.rest==='j'?Math.max(0,Math.floor((AV-used)/(rowH+.5+.6))):0;
+  const html=mine.length?`<div style="display:flex;flex-direction:column;gap:${GAP}cqw">${mine.map(t=>`<div style="display:flex;flex-direction:column;gap:.5cqw">${plan.map(m=>row(m==='none'?'':t,m==='trace'?(cur?H:'trace'):m)).join('')}</div>`).join('')}${extra?`<div style="display:flex;flex-direction:column;gap:.6cqw">${Array(extra).fill(row('','none')).join('')}</div>`:''}</div>`:'<p style="color:#5b6578">Schreib oben deine Sätze in das Feld.</p>';
   return {title:o.titel||'Abschreiben',anw:o.zeilen==='n'?'Spure die Sätze genau nach.':'Lies den Satz. Spure nach und schreibe ihn selbst in die freie Zeile.',html,
    hinweis:pages>1?`Dein Text ist für ${pages} Blätter zu lang. Du siehst Blatt ${bi+1} von ${pages} – wähle oben bei „Blatt“ die anderen.`:''}}});
 // ===== SACHUNTERRICHT =====
