@@ -1,1 +1,18 @@
-# Volksschulwerkstatt
+# Volksschul-Werkstatt
+
+Druckbare Arbeitsblätter für die Volksschule nach dem österreichischen Lehrplan (1.–4. Klasse).
+
+**Öffnen:** `index.html` im Browser, oder über GitHub Pages.
+
+## Inhalt
+
+- **Vorlagen:** leere Lineaturen (1., 2., 3./4. Klasse), einfache Zeilen, Kästchen, mit Malfeld
+- **Mathematik:** Mengen, Ziffern, Zahlenhaus, Vergleichen, Nachbarzahlen, Plus/Minus bis 20 und 100, Einmaleins, schriftliches Rechnen, Stellenwerte, Formen, Uhrzeit, Geld
+- **Deutsch:** Anlaute, Buchstaben, Silben, Reime, Lesen, der/die/das, Wortarten, Einzahl/Mehrzahl, Satzzeichen, Zeitformen, Rechtschreibung (ie/i, ck/tz, Doppelmitlaute, eu/äu, e/ä, ss/ß, Auslaute), Satzgrenzen, ABC, Wortschlangen, Gegensätze, Schreibschrift, eigene Sätze
+- **Sachunterricht:** Jahreszeiten, Wochentage und Monate, Mein Körper, Ampel und Schulweg, Bundesländer
+
+Jedes Blatt passt auf eine A4-Seite, auf Wunsch auch ½ oder ⅓ A4 (mehrfach auf einem Blatt zum Kopieren). Lösungen lassen sich einblenden. Blätter können gedruckt oder als PDF gespeichert werden. Zu jedem Thema gibt es eine Übung für die interaktive Tafel.
+
+## Schreibschrift
+
+Die Online-Version verwendet eine nachgezeichnete Ersatz-Schreibschrift. Wer eine Schriftdatei der österreichischen Schulschrift besitzt, kann sie bei den Schreibschrift-Themen mit **„Schulschrift laden“** einbinden. Die Schrift wird nur im eigenen Browser gespeichert und nicht hochgeladen.
