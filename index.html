@@ -1195,9 +1195,9 @@ T({id:'s-jahreszeiten',fach:'S',stufen:[1,2],t:'Die Jahreszeiten',info:'Frühlin
   on(st,'click','.jbild .hs',g=>{const t=g.querySelector('.lbl');t.setAttribute('opacity',t.getAttribute('opacity')==='1'?0:1)});
   segs(st,(kk,v)=>{clearTimers();st.querySelector('.jbild').hidden=true;st.querySelector('.canvas').hidden=false;set(v)});act(st,{bild(){clearTimers();const jb=st.querySelector('.jbild');jb.hidden=!jb.hidden;st.querySelector('.canvas').hidden=!jb.hidden},lauf(){st.querySelector('.jbild').hidden=true;st.querySelector('.canvas').hidden=false;clearTimers();const ks=Object.keys(NM);let i=0;set(ks[0]);every(()=>{i=(i+1)%4;set(ks[i])},3500)}});set('fr')}});
 
-T({id:'s-zeit',fach:'S',stufen:[1,2],t:'Wochentage und Monate',info:'Die Reihenfolge der Wochentage und Monate kennen – gestern, heute, morgen.',
+T({id:'s-zeit',fach:'S',stufen:[1,2,3],t:'Wochentage und Monate',info:'Die Reihenfolge der Wochentage und Monate kennen – gestern, heute, morgen.',
  opts:[opt('art','Thema',[['t','Wochentage'],['m','Monate']],'t'),
-  opt('ub','Übung',[['l','Lücken und davor/danach'],['bn','Bilder: Namen schreiben'],['bo','Bilder: richtige Reihenfolge'],['bk','Bildkarten zum Ausschneiden']],'l'),
+  opt('ub','Übung',[['bn','Bilder: Namen schreiben'],['bo','Bilder: richtige Reihenfolge'],['bk','Bildkarten zum Ausschneiden'],['l','Lücken und davor/danach (ohne Bilder)']],'bn'),
   {...opt('kt','Karten',[['1','Blatt 1'],['2','Blatt 2']],'1'),when:['bk']}],def:{2:{art:'m'}},
  blatt(o,s){const isT=o.art==='t',L=isT?TAGE:MONATE,img=i=>CALIMG[(isT?'d':'m')+(i+1)];
   if(o.ub==='bk'){const per=isT?8:6,cols=2,start=isT?0:(+o.kt-1)*6,idx=[...Array(L.length).keys()].slice(start,start+per),rows=Math.ceil(per/cols),gap=1.6;
