@@ -662,6 +662,66 @@ T({id:'m-geld',fach:'M',stufen:[1,2,3],t:'Geld (Euro und Cent)',info:'Münzen un
   act(st,{clr(){tray=[];draw()},sum(){showSum=!showSum;draw()},ziel(){target=geldMenge(lv==='e10'?'e10':lv).sum;tray=[];showSum=false;draw()},
    chk(){const sum=tray.reduce((a,b)=>a+b,0);st.querySelector('.zt').textContent=target?(sum===target?`Richtig! Das sind genau ${fmtE(target)}.`:sum<target?`Noch ${fmtE(target-sum)} fehlen.`:`Zu viel: ${fmtE(sum-target)} zu viel.`):`Das sind ${fmtE(sum)}.`}});draw()}});
 
+// ===== ZAHLENSTRAHL =====
+const ZSM={z10:{l:'0 bis 10',a:()=>0,len:10,st:1,mid:5,lab:1},z20:{l:'0 bis 20',a:()=>0,len:20,st:1,mid:5,lab:5},
+ z100a:{l:'Ausschnitt im 100er (z. B. 40 bis 60)',a:()=>R(0,8)*10,len:20,st:1,mid:5,lab:10},z100:{l:'0 bis 100',a:()=>0,len:100,st:1,mid:5,lab:10},
+ z1000a:{l:'Ausschnitt im 1000er (z. B. 300 bis 400)',a:()=>R(0,9)*100,len:100,st:1,mid:5,lab:10},z1000:{l:'0 bis 1 000',a:()=>0,len:1000,st:10,mid:50,lab:100}};
+function zsSVG(a,m,{gaps=[],arrows=[],showArrowsAsSol=false,W=900,hideLab=[]}={}){const L=30,Rr=W-30,n=m.len/m.st,dx=(Rr-L)/n,y=34,X=v=>L+(v-a)/m.st*dx;
+  let s=`<svg viewBox="0 0 ${W} ${gaps.length?128:86}" style="width:100%;display:block"><line x1="${L-14}" y1="${y}" x2="${Rr+18}" y2="${y}" stroke="#1d2433" stroke-width="2.6"/><path d="M${Rr+18} ${y-7} L${Rr+28} ${y} L${Rr+18} ${y+7}" fill="#1d2433"/>`;
+  for(let i=0;i<=n;i++){const v=a+i*m.st,big=v%m.lab===0,md=v%m.mid===0,h=big?15:md?11:6,x=X(v);
+    s+=`<line x1="${x.toFixed(1)}" y1="${y-h}" x2="${x.toFixed(1)}" y2="${y+h}" stroke="#1d2433" stroke-width="${big?2.2:md?1.7:1.2}"/>`;
+    if(v%m.lab===0&&!gaps.includes(v)&&!hideLab.includes(v))s+=`<text x="${x.toFixed(1)}" y="${y+36}" text-anchor="middle" font-size="${m.len>=100&&m.lab>=100?16:18}" font-weight="700" font-family="Andika,sans-serif" fill="#1d2433">${nf(v)}</text>`}
+  gaps.forEach(v=>{const x=X(v),bw=v>=100?62:48,bx=Math.min(Math.max(x-bw/2,2),W-bw-2);s+=`<line x1="${x.toFixed(1)}" y1="${y+16}" x2="${(bx+bw/2).toFixed(1)}" y2="${y+56}" stroke="#5b6578" stroke-width="1.5"/><rect x="${bx.toFixed(1)}" y="${y+56}" width="${bw}" height="34" rx="5" fill="#ffffff" stroke="#5b6578" stroke-width="2"/><text class="sol" x="${(bx+bw/2).toFixed(1)}" y="${y+80}" text-anchor="middle" font-size="19" font-weight="700" fill="#d9432f" font-family="Andika,sans-serif">${nf(v)}</text>`});
+  arrows.forEach(v=>{const x=X(v);s+=`<g class="${showArrowsAsSol?'sol':''}"><path d="M${x.toFixed(1)} ${y-17} L${x.toFixed(1)} ${y-2}" stroke="#d9432f" stroke-width="2.6"/><path d="M${(x-5).toFixed(1)} ${y-9} L${x.toFixed(1)} ${y-2} L${(x+5).toFixed(1)} ${y-9}" fill="none" stroke="#d9432f" stroke-width="2.6"/></g>`});
+  return s+'</svg>'}
+function zsPickGaps(a,m,k,minDist){const n=m.len/m.st,cand=[];for(let i=0;i<=n;i++){const v=a+i*m.st;cand.push(v)}const out=[];for(const v of shuffle(cand)){if(out.every(u=>Math.abs(u-v)/m.len>=minDist))out.push(v);if(out.length>=k)break}return out.sort((p,q)=>p-q)}
+T({id:'m-zahlenstrahl',fach:'M',stufen:[1,2,3],t:'Zahlenstrahl',info:'Zahlen am Zahlenstrahl ablesen und einzeichnen – im Zahlenraum 10, 20, 100 und 1 000.',
+ opts:[opt('zr','Zahlenstrahl',Object.entries(ZSM).map(([k,v])=>[k,v.l]),'z20'),opt('art','Aufgabe',[['erg','Zahlen ergänzen'],['pf','Zahlen einzeichnen (Pfeile)'],['g','gemischt']],'g')],def:{2:{zr:'z100a'},3:{zr:'z1000a'}},
+ blatt(o,s){const m=ZSM[o.zr],N=sz(s,6,3,2),dense=m.len/m.st>40;let h='';
+  for(let i=0;i<N;i++){const a=m.a(),k=o.art==='pf'||(o.art==='g'&&i%2)?'pf':'erg';
+   if(k==='erg'){const g=zsPickGaps(a,m,dense?5:6,dense?.13:.1);h+=`<div>${zsSVG(a,m,{gaps:g})}</div>`}
+   else{const g=zsPickGaps(a,m,dense?4:5,.1).filter(v=>v%m.lab!==0||rng()<.2);h+=`<div><div style="font-size:2.6cqw;margin-bottom:.4cqw">Zeichne ein: ${g.map(v=>`<b style="display:inline-block;border:.2cqw solid #c7cfdd;border-radius:.8cqw;padding:0 1cqw;margin-right:1cqw">${nf(v)}</b>`).join('')}</div>${zsSVG(a,m,{arrows:g,showArrowsAsSol:true})}</div>`}}
+  return {anw:o.art==='erg'?'Welche Zahlen fehlen? Schreibe sie in die Kästchen.':o.art==='pf'?'Zeichne die Zahlen mit einem Pfeil am Zahlenstrahl ein.':'Ergänze die fehlenden Zahlen oder zeichne die Zahlen mit einem Pfeil ein.',
+   html:`<div style="display:flex;flex-direction:column;gap:2.6cqw;flex:1;justify-content:space-around">${h}</div>`}},
+ tafel(st){let zr='z20',a=0,g=[],ask=null;
+  st.innerHTML=`<div class="ctl">${seg('zr',Object.entries(ZSM).map(([k,v])=>[k,v.l.replace(/ \\(.*\\)/,'')]),'z20')}<button class="btn pri" data-a="neu">Neuer Zahlenstrahl</button><button class="btn" data-a="all">Alle zeigen</button><button class="btn" data-a="such">Wo ist …?</button><span class="note zq" style="font-size:1.2em"></span></div><div class="canvas"><div class="zw" style="width:100%"></div></div><p class="hint" style="font-size:15px">Tippe auf ein Kästchen, dann erscheint die Zahl.</p>`;
+  const draw=()=>{const m=ZSM[zr];st.querySelector('.zw').innerHTML=zsSVG(a,m,{gaps:g,arrows:ask!==null&&ask.shown?[ask.v]:[]}).replace(/<text class="sol"/g,'<text class="zsol" opacity="0"').replace(/<rect /g,'<rect class="zbx" style="cursor:pointer" ')};
+  const neu=()=>{const m=ZSM[zr];a=m.a();g=zsPickGaps(a,m,m.len/m.st>40?5:6,.1);ask=null;st.querySelector('.zq').textContent='';draw()};
+  on(st,'click','.zbx',r=>{const t=r.nextElementSibling;if(t)t.setAttribute('opacity',t.getAttribute('opacity')==='1'?0:1)});
+  segs(st,(k,v)=>{zr=v;neu()});
+  act(st,{neu,all(){st.querySelectorAll('.zsol').forEach(t=>t.setAttribute('opacity',1))},such(){const m=ZSM[zr];if(ask&&!ask.shown){ask.shown=true;draw();return}const v=a+R(1,m.len/m.st-1)*m.st;ask={v,shown:false};st.querySelector('.zq').textContent=`Wo ist die ${nf(v)}? (nochmal tippen = Lösung)`;draw()}});neu()}});
+
+// ===== EINER, ZEHNER, HUNDERTER =====
+function dienesSVG(h,z,e,{u=8}={}){const parts=[],gap=u*.9,hr=h>3?Math.ceil(h/5)*0+2:1,perRow=hr>1?Math.ceil(h/2):h,TH=hr*10*u+(hr-1)*gap;let x=0;
+  for(let i=0;i<h;i++){const c=i%perRow,r=Math.floor(i/perRow),px=c*(10*u+gap),py=TH-10*u-(hr-1-r)*(10*u+gap)-0;let p=`<rect x="${px}" y="${(r*(10*u+gap))}" width="${10*u}" height="${10*u}" fill="#f6c94c" stroke="#7a5a12" stroke-width="1.4"/>`;const yy=r*(10*u+gap);for(let k=1;k<10;k++)p+=`<line x1="${px+k*u}" y1="${yy}" x2="${px+k*u}" y2="${yy+10*u}" stroke="#7a5a12" stroke-width=".6"/><line x1="${px}" y1="${yy+k*u}" x2="${px+10*u}" y2="${yy+k*u}" stroke="#7a5a12" stroke-width=".6"/>`;parts.push(p)}
+  if(h)x=Math.min(h,perRow)*(10*u+gap)+gap;const by=TH-10*u;
+  for(let i=0;i<z;i++){let p=`<rect x="${x}" y="${by}" width="${u}" height="${10*u}" fill="#7fb5ea" stroke="#1f4f86" stroke-width="1.4"/>`;for(let k=1;k<10;k++)p+=`<line x1="${x}" y1="${by+k*u}" x2="${x+u}" y2="${by+k*u}" stroke="#1f4f86" stroke-width=".6"/>`;parts.push(p);x+=u+gap*.6}
+  if(z)x+=gap;const ex=x;for(let i=0;i<e;i++){const c=i%5,r=Math.floor(i/5);parts.push(`<rect x="${ex+c*(u+3)}" y="${TH-u-r*(u+3)}" width="${u}" height="${u}" fill="#8fd18b" stroke="#2f6b2b" stroke-width="1.4"/>`)}
+  if(e)x+=Math.min(e,5)*(u+3);const W=Math.max(x,u),vb=`-2 -2 ${W+4} ${TH+4}`;
+  return {svg:`<svg viewBox="${vb}" style="height:100%;max-width:100%;display:block">${parts.join('')}</svg>`,rows:hr,sized:(hc,maxw)=>{let k=hc*hr/(10*u+4);if((W+4)*k>maxw)k=maxw/(W+4);return `<svg viewBox="${vb}" style="width:${((W+4)*k).toFixed(2)}cqw;height:${((TH+4)*k).toFixed(2)}cqw;display:block">${parts.join('')}</svg>`},w:W+4,h:TH+4}}
+T({id:'m-ezh',fach:'M',stufen:[2,3],t:'Einer, Zehner, Hunderter',info:'Zahlen mit Einern, Zehnern und Hundertern darstellen: Mengenbilder zählen, Stellenwerttafel, zerlegen und Kurzschrift zeichnen.',
+ opts:[opt('max','Zahlenraum',[[100,'bis 100 (Zehner und Einer)'],[1000,'bis 1 000 (mit Hundertern)']],100),
+  opt('art','Übung',[['bild','Mengenbilder zählen'],['tab','Stellenwerttafel'],['zer','Zahlen zerlegen'],['kurz','Zahlen zeichnen (Kurzschrift)'],['g','gemischtes Blatt']],'bild')],def:{3:{max:1000}},
+ blatt(o,s){const max=+o.max,H3=max>100,cols=H3?['H','Z','E']:['Z','E'];
+  const num=()=>{for(;;){const x=H3?R(101,999):R(11,99);if(x%10||rng()<.2)return x}};
+  const dg=x=>{const h=Math.floor(x/100),z=Math.floor(x%100/10),e=x%10;return {h,z,e}};
+  const bild=N=>`<div style="display:flex;flex-direction:column;gap:2.2cqw">${Array.from({length:N},()=>{const x=num(),{h,z,e}=dg(x),d=dienesSVG(h,z,e);
+     return `<div class="mrow" style="gap:2cqw;align-items:center"><div style="flex:1;min-width:0;display:flex;align-items:center">${d.sized(H3?9:11,H3?56:52)}</div><div class="rz" style="font-size:2.7cqw;flex:none">${H3?`${box(h)} H `:''}${box(z)} Z ${box(e)} E = ${box(x,'w')}</div></div>`}).join('')}</div>`;
+  const tab=N=>{const xs=Array.from({length:N},num);return `<table class="t" style="font-size:2.8cqw"><tr>${cols.map(c=>`<th>${{H:'Hunderter',Z:'Zehner',E:'Einer'}[c]}</th>`).join('')}<th style="width:30%">Zahl</th></tr>${xs.map((x,i)=>{const {h,z,e}=dg(x),v=H3?[h,z,e]:[z,e];return i%2?`<tr>${v.map(d=>`<td><b>${d}</b></td>`).join('')}<td>${sol(x)}</td></tr>`:`<tr>${v.map(d=>`<td>${sol(d)}</td>`).join('')}<td><b>${x}</b></td></tr>`}).join('')}</table>`};
+  const zer=N=>`<div class="g" style="grid-template-columns:1fr;gap:2.4cqw">${Array.from({length:N},()=>{const x=num(),{h,z,e}=dg(x);return `<div class="rz" style="font-size:2.9cqw">${x} = ${H3?`${box(h)} H + `:''}${box(z)} Z + ${box(e)} E = ${H3?`${box(h*100,'w')} + `:''}${box(z*10)} + ${box(e)}</div>`}).join('')}</div>`;
+  const kurz=N=>`<div style="font-size:2.4cqw;color:#5b6578;margin-bottom:.6cqw">${H3?'□ = Hunderter, ':''}| = Zehner, • = Einer</div><div class="g" style="grid-template-columns:1fr 1fr;gap:2.4cqw 4cqw">${Array.from({length:N},()=>{const x=num(),{h,z,e}=dg(x);return `<div class="mrow" style="gap:1.6cqw"><b class="big" style="min-width:9cqw">${x}</b><div style="flex:1;min-height:9cqw;border:.25cqw solid #c7cfdd;border-radius:1.2cqw;display:flex;align-items:center;padding:0 1.4cqw;font-size:3.4cqw;letter-spacing:.15em;overflow:hidden">${sol((H3?'□'.repeat(h)+' ':'')+'|'.repeat(z)+' '+'•'.repeat(e))}</div></div>`}).join('')}</div>`;
+  const A={bild:[H3?'Wie viele Hunderter, Zehner und Einer sind es? Schreibe auch die Zahl.':'Wie viele Zehner und Einer sind es? Schreibe auch die Zahl.',bild,H3?sz(s,5,2,1):sz(s,8,3,2)],tab:['Trage in die Stellenwerttafel ein oder schreibe die Zahl.',tab,sz(s,10,4,2)],zer:['Zerlege die Zahlen.',zer,sz(s,10,4,2)],kurz:['Zeichne die Zahlen in Kurzschrift.',kurz,sz(s,10,4,2)]};
+  if(o.art!=='g'){const [anw,f,n]=A[o.art];return {anw,html:f(n)}}
+  return {anw:A.bild[0],html:bild(sz(s,3,2,1))+(s>0.4?`<div class="ws-sub">Trage in die Stellenwerttafel ein oder schreibe die Zahl.</div>${tab(sz(s,4,2,0))}`:'')+(s>0.9?`<div class="ws-sub">Zerlege die Zahlen.</div>${zer(3)}`:'')}},
+ tafel(st,ctx){let H3=ctx.stufe>2,v={h:0,z:2,e:4},msg='';
+  st.innerHTML=`<div class="ctl">${seg('m',[['100','bis 100'],['1000','bis 1 000']],H3?'1000':'100')}<button class="btn" data-a="zuf">Zufallszahl</button><button class="btn" data-a="null">Leeren</button><span class="hint">Mit + und − legen. Bei 10 wird gebündelt.</span></div><div class="canvas col"><div class="huge en"></div><div class="eb" style="height:min(30vh,240px);width:100%;display:flex;justify-content:center"></div><div class="ectl" style="display:flex;gap:18px;flex-wrap:wrap;justify-content:center"></div><div class="note"></div></div>`;
+  const draw=()=>{const n=v.h*100+v.z*10+v.e;st.querySelector('.en').textContent=n;st.querySelector('.eb').innerHTML=dienesSVG(v.h,v.z,v.e,{u:10}).svg;st.querySelector('.note').textContent=msg;
+   st.querySelector('.ectl').innerHTML=(H3?[['h','Hunderter','#f6c94c']]:[]).concat([['z','Zehner','#7fb5ea'],['e','Einer','#8fd18b']]).map(([k,l,c])=>`<div style="display:flex;align-items:center;gap:6px;border:3px solid ${c};border-radius:12px;padding:6px 10px"><b>${l}: ${v[k]}</b><button class="btn" data-p="${k}" style="padding:4px 12px">+</button><button class="btn" data-m="${k}" style="padding:4px 12px">−</button></div>`).join('')};
+  on(st,'click','[data-p]',b=>{const k=b.dataset.p;v[k]++;msg='';if(v.e>9){v.e-=10;v.z++;msg='10 Einer = 1 Zehner – gebündelt!'}if(v.z>9){if(H3){v.z-=10;v.h++;msg='10 Zehner = 1 Hunderter – gebündelt!'}else{v.z=9}}if(v.h>9)v.h=9;draw()});
+  on(st,'click','[data-m]',b=>{const k=b.dataset.m;if(v[k]>0)v[k]--;msg='';draw()});
+  segs(st,(k,x)=>{H3=x==='1000';if(!H3)v.h=0;draw()});
+  act(st,{zuf(){v={h:H3?R(1,9):0,z:R(0,9),e:R(0,9)};msg='';draw()},null(){v={h:0,z:0,e:0};msg='';draw()}});draw()}});
+
 // ===== DEUTSCH =====
 T({id:'d-anlaute',fach:'D',stufen:[1],t:'Anlaute hören',info:'Den ersten Laut eines Wortes hören und den passenden Buchstaben finden.',
  opts:[opt('art','Aufgabe',[['s','Anlaut schreiben'],['k','Bilder mit einem Laut einkreisen'],['w','Anlaut im Wort ergänzen']],'s'),opt('b','Laut',[['alle','alle'],...['A','E','I','O','U','M','L','S','R','N','T','F','H','W','B','D','K','P','G','Z','Sch'].map(x=>[x,x])],'alle')],
