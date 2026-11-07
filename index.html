@@ -950,7 +950,8 @@ T({id:'d-schreibschrift',fach:'D',stufen:[2,3],t:'Schreibschrift',info:'Österre
  opts:[opt('art','Übung',[['schwung','Schwungübungen'],['eis','Musterbild (Eistüte)'],['b','Buchstabe üben'],['w','Wörter übertragen'],['ein','ein oder eine'],['s','Sätze abschreiben'],['abc','ABC in Druck- und Schreibschrift']],'b'),
   {...opt('b','Buchstabe',SBUCH.map(x=>[x,x]),'m'),when:['b']},
   {...opt('teil','Teil',[['1','Hälfte 1: A bis N'],['2','Hälfte 2: O bis ß'],['q1','Viertel 1: A bis G'],['q2','Viertel 2: H bis N'],['q3','Viertel 3: O bis U'],['q4','Viertel 4: V bis ß'],['g','ganzes ABC']],'1'),when:['abc']},
-  {...opt('hilfe','Spurhilfe',[['grau','graue Vorlage'],['hohl','gepunktet / Umriss'],['ohne','ohne Vorlage']],'grau'),when:['schwung','eis','b','w','s','abc']}],def:{3:{art:'s'}},
+  {...opt('hilfe','Spurhilfe',[['grau','graue Vorlage'],['hohl','gepunktet / Umriss'],['ohne','ohne Vorlage']],'grau'),when:['schwung','eis','b','w','s','abc']},
+  {...opt('zl','Zeilen pro Satz',[['1','Vorlage + 1 Zeile'],['2','Vorlage + 2 Zeilen']],'1'),when:['s']}],def:{3:{art:'s'}},
  blatt(o,s){const H=o.hilfe||'grau',row=x=>`<div>${x}</div>`;
   if(o.art==='schwung'){const N=Math.max(1,Math.min(sz(s,8,3,2),Math.floor(AVAIL(s)/rowCq(sGeo())))),ty=shuffle(MUSTER).slice(0,N);
    return {anw:'Spure die Muster nach und schreibe sie selbst weiter. Beginne links.',title:'Schwungübungen',html:`<div style="display:flex;flex-direction:column;flex:1;justify-content:space-evenly">${ty.map(([t])=>row(musterRow(t,H))).join('')}</div>`}}
@@ -969,8 +970,10 @@ T({id:'d-schreibschrift',fach:'D',stufen:[2,3],t:'Schreibschrift',info:'Österre
   if(o.art==='ein'){const N=sz(s,12,6,3),items=shuffle(BILDER.filter(b=>b[0].length<9)).slice(0,N),g=sGeo(300),gm=sGeo(900);
    const vor=sSvg(gm,sText('ein',12,gm,'solid')+sText('ein',12+tw('ein',gm.fs)+gm.X*1.4,gm,'grau')+sText('eine',420,gm,'solid')+sText('eine',420+tw('eine',gm.fs)+gm.X*1.4,gm,'grau'));
    return {anw:'Schreibe ein oder eine in Schreibschrift auf.',title:'ein oder eine',html:`${s>0.4?vor:''}<div class="g" style="grid-template-columns:repeat(3,1fr);flex:1;align-content:space-evenly;gap:2.6cqw 3cqw">${items.map(b=>`<div class="mrow"><div style="flex:1">${sSvg(g,sText(b[2]==='die'?'eine':'ein',10,g,'sol'))}</div><span class="emo" style="font-size:5.4cqw">${b[1]}</span></div>`).join('')}</div>`}}
-  if(o.art==='s'){const N=Math.max(1,Math.min(sz(s,5,2,1),Math.floor(AVAIL(s)/(2*rowCq(sGeo())+1.5)))),items=shuffle(SSAETZE.filter(x=>fitsRow(x))).slice(0,N),g=sGeo(900);
-   return {anw:'Lies den Satz. Schreibe ihn darunter in Schreibschrift ab.',title:'Sätze abschreiben',html:`<div style="display:flex;flex-direction:column;flex:1;justify-content:space-evenly">${items.map(t=>`<div style="display:flex;flex-direction:column;gap:.6cqw">${sSvg(g,sText(t,12,g,'solid'))}${sSvg(g,H==='ohne'?'':sText(t,12,g,H))}</div>`).join('')}</div>`}}
+  if(o.art==='s'){const g=sGeo(900),rh=g.H/g.W*90,zl=+(o.zl||1),per=1+zl,gap=2.2,
+    N=Math.max(1,Math.floor((sz(s,114,53,30)+gap)/(per*(rh+.5)+gap))),pool=shuffle(SSAETZE.filter(x=>fitsRow(x))),items=Array.from({length:N},(_,i)=>pool[i%pool.length]);
+   const leer=sSvg(g,'');
+   return {anw:zl>1?'Lies den Satz. Schreibe ihn darunter zweimal in Schreibschrift ab.':'Lies den Satz. Schreibe ihn darunter in Schreibschrift ab.',title:'Sätze abschreiben',html:`<div style="display:flex;flex-direction:column;gap:${gap}cqw">${items.map(t=>`<div style="display:flex;flex-direction:column;gap:.5cqw">${sSvg(g,sText(t,12,g,'solid'))}${sSvg(g,H==='ohne'?'':sText(t,12,g,H))}${zl>1?leer:''}</div>`).join('')}</div>`}}
   // ABC
   const L=[...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'].map(c=>[c,c.toLowerCase()]);L.push(['Qu','qu'],['','ß']);const g=sGeo(420);
   const cell=([U,l])=>{const t=U?`${U} ${l}`:l,w=tw(t,g.fs),x2=10+w+g.X*1.6;return `<div class="mrow" style="gap:1.6cqw"><span style="font-size:3.4cqw;width:9cqw;white-space:nowrap">${U} ${l}</span><div style="flex:1">${sSvg(g,sText(t,10,g,'solid')+(x2+w<g.W-4?sText(t,x2,g,H==='ohne'?'none':H):''))}</div></div>`};
