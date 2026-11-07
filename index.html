@@ -1380,19 +1380,31 @@ function pdfFromJpeg(jpg,w,h){const enc=new TextEncoder(),parts=[],offs=[];let l
   const cs='q 595.28 0 0 841.89 0 0 cm /Im0 Do Q';obj(5,()=>push(`<< /Length ${cs.length} >>\nstream\n${cs}\nendstream`));
   const x=len;push(`xref\n0 6\n0000000000 65535 f \n${[1,2,3,4,5].map(n=>String(offs[n]).padStart(10,'0')+' 00000 n \n').join('')}trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n${x}\n%%EOF`);
   return new Blob(parts,{type:'application/pdf'})}
+async function pageToCanvasFO(el,W){ // Weg 2: Blatt als SVG-Bild zeichnen (ohne Zusatzprogramm)
+  const css=[...document.querySelectorAll('style')].map(x=>x.textContent).join('\n');
+  const r=el.getBoundingClientRect(),w=Math.round(r.width),h=Math.round(r.height),sc=W/w;
+  const clone=el.cloneNode(true);clone.style.width=w+'px';clone.style.height=h+'px';clone.style.maxWidth='none';clone.style.margin='0';clone.style.boxShadow='none';
+  const xhtml=new XMLSerializer().serializeToString(clone);
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${w*sc}" height="${h*sc}" viewBox="0 0 ${w} ${h}"><foreignObject x="0" y="0" width="${w}" height="${h}"><div xmlns="http://www.w3.org/1999/xhtml" style="width:${w}px;height:${h}px;background:#fff"><style>${css.replace(/]]>/g,'')}</style>${xhtml}</div></foreignObject></svg>`;
+  const img=new Image();img.decoding='sync';
+  await new Promise((ok,no)=>{img.onload=ok;img.onerror=()=>no(new Error('Bild konnte nicht gezeichnet werden'));img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg)});
+  const cv=document.createElement('canvas');cv.width=Math.round(w*sc);cv.height=Math.round(h*sc);const cx=cv.getContext('2d');cx.fillStyle='#fff';cx.fillRect(0,0,cv.width,cv.height);cx.drawImage(img,0,0,cv.width,cv.height);
+  cv.toDataURL('image/jpeg',.5);return cv}
 async function savePDF(btn){const msg=$('pdfmsg'),say=t=>{if(msg)msg.textContent=t};
-  if(typeof html2canvas!=='function'){say('Die PDF-Erstellung konnte nicht geladen werden (keine Internetverbindung?). Öffne die Datei im Browser und wähle „Drucken“ → „Als PDF speichern“.');return}
-  const old=btn.textContent;btn.disabled=true;btn.textContent='PDF wird erstellt …';
-  try{const el=$('page'),sc=Math.min(4,2480/el.offsetWidth);
-    const cv=await html2canvas(el,{scale:sc,backgroundColor:'#ffffff',useCORS:true,logging:false});
+  const old=btn.textContent;btn.disabled=true;btn.textContent='PDF wird erstellt …';const errs=[];
+  try{const el=$('page');let cv=null;
+    if(typeof html2canvas==='function'){try{cv=await html2canvas(el,{scale:Math.min(4,2480/el.offsetWidth),backgroundColor:'#ffffff',useCORS:true,logging:false})}catch(e){errs.push('Weg 1: '+(e&&e.message||e))}}
+    else errs.push('Weg 1: Hilfsprogramm nicht geladen');
+    if(!cv){try{cv=await pageToCanvasFO(el,2480)}catch(e){errs.push('Weg 2: '+(e&&e.message||e))}}
+    if(!cv)throw new Error(errs.join(' · '));
     const url=cv.toDataURL('image/jpeg',.9),bin=atob(url.split(',')[1]),jpg=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)jpg[i]=bin.charCodeAt(i);
     const blob=pdfFromJpeg(jpg,cv.width,cv.height);
     const name=`${(S.topic.t+' '+S.stufe+'. Klasse'+(S.sol?' Lösung':'')).replace(/[\\/:*?"<>|]/g,'')}.pdf`;
     let dl=null;try{dl=window.claude&&window.claude.use?await window.claude.use('downloads'):null}catch(e){dl=null}
-    if(dl){try{await dl.save({filename:name,data:blob});say(`Gespeichert: ${name}`)}catch(e){say(e&&e.code==='declined'?'Speichern abgebrochen.':'Speichern ist hier gerade nicht möglich. Öffne die Datei im Browser und wähle „Drucken“ → „Als PDF speichern“.')}}
-    else if(window.self===window.top){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},2000);say(`Gespeichert: ${name}`)}
-    else say('Speichern ist hier nicht möglich. Öffne die Werkstatt-Datei im Browser und wähle „Drucken“ → „Als PDF speichern“.')}
-  catch(e){say('Das PDF konnte nicht erstellt werden. Öffne die Datei im Browser und wähle „Drucken“ → „Als PDF speichern“.')}
+    if(dl){try{await dl.save({filename:name,data:blob});say(`Gespeichert: ${name}`)}catch(e){say(e&&e.code==='declined'?'Speichern abgebrochen.':`Speichern ist hier gerade nicht möglich (${e&&e.code||'unbekannt'}). Öffne die Werkstatt auf GitHub Pages und nutze dort „Als PDF speichern“ oder „Drucken“.`)}}
+    else if(window.self===window.top){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},4000);say(`Gespeichert: ${name} (im Download-Ordner)`)}
+    else say('Speichern ist in dieser Ansicht nicht möglich. Öffne die Werkstatt auf GitHub Pages und nutze dort „Als PDF speichern“ oder „Drucken“.')}
+  catch(e){say('Das PDF konnte nicht erstellt werden. Grund: '+(e&&e.message||e)+'. Alternative: „Drucken“ und dann „Als PDF sichern“.')}
   finally{btn.disabled=false;btn.textContent=old}}
 function fromHash(){const m=location.hash.match(/^#k([1-4])-([a-z0-9-]+?)(-tafel)?$/);if(m){S.stufe=+m[1];S.view=m[3]?'tf':'ab';selectTopic(m[2])}else selectTopic('m-zr20')}
 window.addEventListener('hashchange',fromHash);fromHash();
