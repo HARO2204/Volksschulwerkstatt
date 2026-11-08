@@ -441,7 +441,7 @@ function ampelSVG(kind,state,blank){ // kind 'auto' | 'fuss'
 const opt=(id,l,c,d)=>({id,l,c,d});
 const TOPICS=[];const T=o=>TOPICS.push(o);
 const FACH={V:['Vorlagen','var(--yellow)'],A:['Abenteuer','#c07a2a'],M:['Mathematik','var(--blue)'],D:['Deutsch','var(--red)'],S:['Sachunterricht','var(--green)']};
-const GEPLANT={1:{S:['Gesunde Jause']},2:{M:['Längen messen (cm, m)'],S:['Tiere im Wald']},3:{M:['Gewichte und Hohlmaße'],D:['Wörtliche Rede'],S:['Himmelsrichtungen','Wasser']},4:{M:['Fläche und Umfang','Brüche (Einstieg)'],D:['Die vier Fälle'],S:['Strom und Magnet']}};
+const GEPLANT={1:{S:['Gesunde Jause']},2:{M:['Längen messen (cm, m)']},3:{M:['Gewichte und Hohlmaße'],D:['Wörtliche Rede'],S:['Himmelsrichtungen','Wasser']},4:{M:['Fläche und Umfang','Brüche (Einstieg)'],D:['Die vier Fälle'],S:['Strom und Magnet']}};
 
 function aufgabe(op,max,mode){
   for(let k=0;k<300;k++){let a,b,r;
@@ -1759,6 +1759,65 @@ function merkBox(rules,big,f0){const f=f0||(big?3.6:2.9);return `<div style="bor
     const r=b0.call(this,o,s,k);if(o.merk!=='n'&&s>0.9)r.html+=merkBox(rules,false);return r}})();
 makeMix('m-mix','M','Mathe-Mix',[],['m-zr20','m-vergleich','m-nachbar'],{2:{t1:'m-zr100',t2:'m-einmaleins',t3:'m-zahlenstrahl'},3:{t1:'m-einmaleins',t2:'m-schriftlich',t3:'m-uhr'},4:{t1:'m-schriftlich',t2:'m-stellenwert',t3:'m-geld'}});
 makeMix('d-mix','D','Deutsch-Mix',['d-eigen','d-lesen-verstehen','d-schreibschrift'],['d-anlaute','d-artikel','d-reime'],{2:{t1:'d-rechtschreibung',t2:'d-artikel',t3:'d-satzzeichen'},3:{t1:'d-rechtschreibung',t2:'d-wortarten',t3:'d-zeitformen'},4:{t1:'d-wortarten',t2:'d-zeitformen',t3:'-'}});
+// ===== TIERE IM WALD =====
+const WT={
+ igel:{n:'der Igel',e:'🦔',nahr:'Käfer, Würmer, Schnecken',wohn:'im Laubhaufen oder unter Hecken',winter:'Winterschlaf',jung:'das Igeljunge',bes:'Er hat etwa 7 000 Stacheln.',kost:'f',
+  r:['Ich habe viele Stacheln.','Ich fresse Käfer, Würmer und Schnecken.','Im Winter halte ich Winterschlaf.']},
+ eich:{n:'das Eichhörnchen',e:'🐿️',nahr:'Nüsse, Samen, Zapfen, Pilze',wohn:'im Kobel (Nest im Baum)',winter:'Winterruhe',jung:'das Junge',bes:'Sein buschiger Schwanz hilft beim Springen.',kost:'p',
+  r:['Ich habe einen buschigen Schwanz.','Im Herbst verstecke ich Nüsse.','Mein Nest im Baum heißt Kobel.']},
+ fuchs:{n:'der Fuchs',e:'🦊',nahr:'Mäuse, Käfer, Beeren',wohn:'im Fuchsbau',winter:'aktiv',jung:'der Welpe',bes:'Er hört Mäuse sogar unter dem Schnee.',kost:'',
+  r:['Mein Fell ist rot, mein Schwanz ist buschig.','Ich wohne in einem Bau.','Ich jage gern Mäuse.']},
+ reh:{n:'das Reh',e:'🦌',nahr:'Gräser, Kräuter, Knospen',wohn:'am Waldrand, ohne Bau',winter:'aktiv',jung:'das Kitz',bes:'Das Kitz hat weiße Punkte im Fell.',kost:'p',
+  r:['Ich bin scheu und springe schnell davon.','Mein Junges heißt Kitz.','Ich fresse Gräser und Knospen.']},
+ hirsch:{n:'der Hirsch',e:'🦌',nahr:'Gräser, Rinde, Eicheln',wohn:'im Wald, ohne Bau',winter:'aktiv',jung:'das Hirschkalb',bes:'Sein Geweih fällt jedes Jahr ab und wächst neu.',kost:'p',
+  r:['Ich trage ein großes Geweih.','Jedes Jahr wächst es neu.','Im Herbst röhre ich laut.']},
+ schwein:{n:'das Wildschwein',e:'🐗',nahr:'Eicheln, Wurzeln, Würmer, Pilze',wohn:'im dichten Wald',winter:'aktiv',jung:'der Frischling',bes:'Es wälzt sich gern im Schlamm.',kost:'a',
+  r:['Ich wühle mit meiner Schnauze im Boden.','Meine Jungen heißen Frischlinge.','Sie haben Streifen im Fell.']},
+ dachs:{n:'der Dachs',e:'🦡',nahr:'Würmer, Insekten, Beeren, Wurzeln',wohn:'im Dachsbau',winter:'Winterruhe',jung:'das Junge',bes:'Sein Bau hat viele Gänge und Ausgänge.',kost:'a',
+  r:['Ich habe schwarze und weiße Streifen im Gesicht.','Ich grabe einen großen Bau.','Im Winter halte ich Winterruhe.']},
+ specht:{n:'der Specht',e:'🐦',nahr:'Insekten und Larven, im Winter Samen',wohn:'in einer Baumhöhle',winter:'aktiv',jung:'das Küken',bes:'Er trommelt sehr schnell mit dem Schnabel.',kost:'f',
+  r:['Ich bin ein Vogel.','Ich klopfe mit dem Schnabel Löcher in Bäume.','Ich fresse Insekten aus der Rinde.']},
+ eule:{n:'die Eule',e:'🦉',nahr:'Mäuse, kleine Vögel, Käfer',wohn:'in einer Baumhöhle',winter:'aktiv',jung:'das Küken',bes:'Sie fliegt fast lautlos.',kost:'f',
+  r:['Am Tag schlafe ich.','In der Nacht jage ich Mäuse.','Ich kann meinen Kopf sehr weit drehen.']},
+ ameise:{n:'die Ameise',e:'🐜',nahr:'Insekten, süßer Saft von Blattläusen',wohn:'im Ameisenhaufen',winter:'Winterstarre',jung:'die Larve',bes:'Sie trägt viel mehr, als sie selbst wiegt.',kost:'',
+  r:['Ich bin sehr klein, aber sehr stark.','Ich wohne mit vielen anderen zusammen.','Unser Zuhause ist ein großer Haufen.']}};
+const WTK=Object.keys(WT),wn=k=>WT[k].n.split(' ').slice(1).join(' ');
+const WFAM=[['Reh','der Rehbock','die Rehgeiß','das Kitz'],['Hirsch','der Hirsch','die Hirschkuh','das Hirschkalb'],['Wildschwein','der Keiler','die Bache','der Frischling'],['Fuchs','der Rüde','die Fähe','der Welpe']];
+const WMERK={winter:['Winterschlaf: Das Tier schläft den ganzen Winter tief und fest. Sein Herz schlägt ganz langsam. (Igel)','Winterruhe: Das Tier schläft viel, wacht aber auf und frisst von seinen Vorräten. (Eichhörnchen, Dachs)','Winterstarre: Das Tier ist starr vor Kälte und bewegt sich nicht. (Ameise)','Aktiv: Das Tier sucht auch im Winter Futter. (Reh, Fuchs, Specht)'],
+ nahr:['Pflanzenfresser fressen nur Pflanzen: Gräser, Knospen, Nüsse. (Reh, Eichhörnchen)','Fleisch- und Insektenfresser fressen andere Tiere: Mäuse, Käfer, Würmer. (Eule, Igel, Specht)','Allesfresser fressen Pflanzen und Tiere. (Wildschwein, Dachs)']};
+function waldMerk(key,title,f=2.8){return `<div style="border:.4cqw solid #2f9a5b;border-radius:1.6cqw;background:#f1faf4;padding:1.8cqw 2.4cqw;color:#1d2433"><div style="font-family:var(--font-d);font-weight:800;font-size:${f*1.15}cqw;color:#1f6b3d">Merke: ${title}</div>${WMERK[key].map(l=>`<div style="font-size:${f}cqw;line-height:1.45;padding-left:${f*1.3}cqw;text-indent:-${f*1.3}cqw;margin-top:.5cqw">▸ ${l}</div>`).join('')}</div>`}
+T({id:'s-wald',fach:'S',stufen:[1,2,3],t:'Tiere im Wald',info:'Heimische Waldtiere: Steckbriefe, wer frisst was, wie die Tiere den Winter verbringen, Tierfamilien, wer wohnt wo und Wer-bin-ich-Rätsel.',
+ opts:[opt('art','Übung',[['st','Steckbrief'],['rae','Wer bin ich? (Rätsel)'],['nahr','Wer frisst was?'],['win','Wie verbringen die Tiere den Winter?'],['fam','Tierfamilien'],['wohn','Wer wohnt wo?']],'st'),
+  {...opt('tier','Tier',[...WTK.map(k=>[k,wn(k)]),['leer','leerer Steckbrief (eigenes Tier)']],'igel'),when:['st']},
+  {...opt('hilfe','Hilfe',[['j','mit Wörterkasten'],['n','ohne Wörterkasten']],'j'),when:['st','nahr','win','fam','wohn','rae']},
+  {...opt('merk','Merkkasten',[['u','unten auf dem Blatt'],['n','ohne']],'u'),when:['nahr','win']}],def:{1:{hilfe:'j'}},
+ blatt(o,s,k){const wb=o.hilfe!=='n',fs=k<=1?3.2:3;
+  if(o.art==='st'){const leer=o.tier==='leer',T0=leer?null:WT[o.tier];const F=[['Name',T0&&T0.n],['So heißt das Junge',T0&&T0.jung],['Das frisst es',T0&&T0.nahr],['Hier wohnt es',T0&&T0.wohn],['Im Winter',T0&&T0.winter],['Das ist besonders',T0&&T0.bes]];
+   const rows=s>0.9?F:s>0.4?F.slice(0,4):F.slice(0,3);
+   const bank=wb&&!leer&&s>0.4?`<div class="wbank" style="font-size:2.3cqw">${shuffle(rows.slice(1).map(r=>r[1])).map(x=>`<span>${x}</span>`).join('')}</div>`:'';
+   return {title:leer?'Steckbrief':`Steckbrief: ${wn(o.tier)}`,anw:leer?'Wähle ein Waldtier. Male es und fülle den Steckbrief aus.':'Fülle den Steckbrief aus.'+(wb?' Die Wörter im Kasten helfen dir.':''),
+    html:`<div style="display:flex;gap:3cqw;align-items:stretch"><div style="flex:none;width:${sz(s,30,22,16)}cqw;height:${sz(s,30,22,16)}cqw;border:.3cqw solid #2f9a5b;border-radius:2cqw;display:flex;align-items:center;justify-content:center;font-size:${sz(s,20,14,10)}cqw;background:#f1faf4">${leer?'':T0.e}</div>
+     <div style="flex:1;display:flex;flex-direction:column;justify-content:space-around;gap:1cqw;font-size:${fs}cqw">${rows.slice(0,1).map(([l,v])=>`<div><b>${l}:</b><div style="border-bottom:.22cqw solid #8b94a8;min-height:5cqw;display:flex;align-items:flex-end">${leer?'':`<span style="font-size:1.1em;font-weight:700">${v}</span>`}</div></div>`).join('')}</div></div>
+     ${bank}<div style="display:flex;flex-direction:column;gap:${sz(s,2.4,1.6,1)}cqw;font-size:${fs}cqw">${rows.slice(1).map(([l,v])=>`<div><b>${l}:</b><div style="border-bottom:.22cqw solid #8b94a8;min-height:5.4cqw;display:flex;align-items:flex-end">${leer?'':sol(v)}</div></div>`).join('')}</div>
+     ${s>0.9&&leer?'<div class="frame" style="min-height:30cqw"><span>Male hier dein Waldtier.</span></div>':''}`}}
+  if(o.art==='rae'){const N=sz(s,6,3,1),ks=shuffle(WTK).slice(0,N);
+   return {title:'Wer bin ich?',anw:'Lies die Rätsel. Welches Waldtier ist es? Schreibe den Namen mit Begleiter auf.',html:`${wb?`<div class="wbank" style="font-size:2.4cqw">${shuffle(ks.map(x=>WT[x].n)).map(x=>`<span>${x}</span>`).join('')}</div>`:''}<div class="g" style="grid-template-columns:1fr 1fr;gap:2.4cqw 3cqw">${ks.map((x,i)=>`<div style="border:.25cqw solid #c7cfdd;border-radius:1.4cqw;padding:1.4cqw 1.8cqw;font-size:${fs*.85}cqw;line-height:1.4;display:flex;flex-direction:column;gap:.8cqw"><b style="color:#2f9a5b">Rätsel ${i+1}</b>${WT[x].r.map(z=>`<div>${z}</div>`).join('')}<div style="margin-top:auto;border-bottom:.22cqw solid #8b94a8;min-height:4.6cqw;display:flex;align-items:flex-end;gap:1.2cqw"><span>Ich bin</span>${sol(WT[x].n)}</div></div>`).join('')}</div>`}}
+  if(o.art==='nahr'){const ks=WTK.filter(x=>WT[x].kost),cols=[['p','Pflanzenfresser'],['f','Fleisch- und Insektenfresser'],['a','Allesfresser']],by=cols.map(([c])=>ks.filter(x=>WT[x].kost===c)),rows=Math.max(...by.map(b=>b.length));
+   return {title:'Wer frisst was?',anw:'Was fressen die Tiere? Ordne sie in die richtige Spalte ein.',html:`<div style="display:flex;flex-wrap:wrap;gap:1.4cqw 2.4cqw;justify-content:center">${shuffle(ks).map(x=>`<div style="display:flex;flex-direction:column;align-items:center;font-size:2.4cqw"><span style="font-size:${sz(s,7,5,4)}cqw;line-height:1">${WT[x].e}</span>${wb?wn(x):''}</div>`).join('')}</div><table class="t" style="font-size:${fs*.9}cqw"><tr>${cols.map(c=>`<th>${c[1]}</th>`).join('')}</tr>${Array.from({length:rows},(_,i)=>`<tr>${by.map(b=>`<td style="height:${sz(s,6,5,4)}cqw">${b[i]?sol(WT[b[i]].n):''}</td>`).join('')}</tr>`).join('')}</table>${o.merk!=='n'&&s>0.9?waldMerk('nahr','Wer frisst was?'):''}`}}
+  if(o.art==='win'){const cols=[['Winterschlaf','Winterschlaf'],['Winterruhe','Winterruhe'],['Winterstarre','Winterstarre'],['aktiv','im Winter aktiv']],ks=shuffle(WTK).slice(0,s>0.4?10:6),by=cols.map(([c])=>ks.filter(x=>WT[x].winter===c)),rows=Math.max(1,...by.map(b=>b.length));
+   return {title:'Tiere im Winter',anw:'Wie verbringen die Tiere den Winter? Schreibe sie in die richtige Spalte.',html:`<div style="display:flex;flex-wrap:wrap;gap:1.4cqw 2.4cqw;justify-content:center">${ks.map(x=>`<div style="display:flex;flex-direction:column;align-items:center;font-size:2.4cqw"><span style="font-size:${sz(s,7,5,4)}cqw;line-height:1">${WT[x].e}</span>${wb||WT[x].e==='🦌'||WT[x].e==='🐦'?wn(x):''}</div>`).join('')}</div><table class="t" style="font-size:${fs*.85}cqw"><tr>${cols.map(c=>`<th>${c[1]}</th>`).join('')}</tr>${Array.from({length:rows},(_,i)=>`<tr>${by.map(b=>`<td style="height:${sz(s,5.4,4.6,4)}cqw">${b[i]?sol(WT[b[i]].n):''}</td>`).join('')}</tr>`).join('')}</table>${o.merk!=='n'&&s>0.9?waldMerk('winter','Tiere im Winter'):''}`}}
+  if(o.art==='fam'){const fam=s>0.4?WFAM:WFAM.slice(0,2),hide=fam.map(()=>R(1,3));
+   return {title:'Tierfamilien im Wald',anw:'Wie heißen Vater, Mutter und Kind? Ergänze die Tabelle.',html:`${wb?`<div class="wbank" style="font-size:2.4cqw">${shuffle(fam.map((f,i)=>f[hide[i]])).map(x=>`<span>${x}</span>`).join('')}</div>`:''}<table class="t" style="font-size:${fs*.9}cqw"><tr><th>Tier</th><th>Vater</th><th>Mutter</th><th>Kind</th></tr>${fam.map((f,i)=>`<tr><td style="font-weight:700">${f[0]}</td>${[1,2,3].map(j=>`<td style="height:6cqw">${j===hide[i]?sol(f[j]):f[j]}</td>`).join('')}</tr>`).join('')}</table>${s>0.9?`<div class="ws-sub">Male eine Tierfamilie.</div><div class="frame" style="min-height:40cqw"></div>`:''}`}}
+  const ks=shuffle(['fuchs','dachs','eich','specht','ameise','igel','eule']).slice(0,sz(s,6,4,3)),P=ks.map(x=>[`${WT[x].e} ${wn(x)}`,WT[x].wohn.replace(/^im |^in einer |^in der |^am /,m=>m)]);
+  return {title:'Wer wohnt wo?',anw:'Wo wohnen die Tiere? Verbinde.',html:matchHTML(P,sz(s,9.5,8,7),x=>`<b style="font-size:3cqw">${x}</b>`,x=>`<span style="font-size:2.7cqw">${x}</span>`)}},
+ tafel(st){let x=pick(WTK),h=1,done=false;
+  st.innerHTML=`<div class="ctl"><button class="btn pri" data-a="neu">Neues Rätsel</button><button class="btn" data-a="tipp">Nächster Hinweis</button><button class="btn" data-a="loes">Lösung</button></div><div class="canvas col"><div class="wr" style="font-size:1.3em;line-height:1.6;text-align:center"></div><div class="qch wc"></div><div class="qfb"></div></div>`;
+  const draw=()=>{const T0=WT[x];st.querySelector('.wr').innerHTML=`<div style="font-family:var(--font-d);font-weight:800;color:var(--green);font-size:1.3em">Wer bin ich?</div>`+T0.r.slice(0,h).map(z=>`<div>${z}</div>`).join('');
+   if(!st.querySelector('.wc').childElementCount){const opts=shuffle([x,...shuffle(WTK.filter(y=>y!==x&&WT[y].e!==T0.e)).slice(0,3)]);st.querySelector('.wc').innerHTML=opts.map(y=>`<button class="btn qbtn" data-y="${y}" style="font-size:1.2em!important;display:flex;flex-direction:column;align-items:center"><span style="font-size:2em">${WT[y].e}</span>${wn(y)}</button>`).join('')}
+   st.querySelector('.qfb').textContent=done?`Richtig! Ich bin ${WT[x].n}. ${WT[x].bes}`:''};
+  on(st,'click','.qbtn',b=>{if(done)return;if(b.dataset.y===x){b.classList.add('ok');done=true;h=3}else{b.classList.add('no');if(h<3)h++}draw()});
+  act(st,{neu(){x=pick(WTK);h=1;done=false;st.querySelector('.wc').innerHTML='';draw()},tipp(){if(h<3)h++;draw()},loes(){h=3;done=true;st.querySelectorAll('.qbtn').forEach(b=>{if(b.dataset.y===x)b.classList.add('ok')});draw()}});draw()}});
+
 /* ---------- Tafel-Helfer ---------- */
 function quizTafel(st,cfg){let it,done,miss,score=0,total=0;
   st.innerHTML=`<div class="ctl">${cfg.ctl||''}<button class="btn pri" data-a="neu">Nächste Karte</button><button class="btn" data-a="sol">Lösung</button><span class="score">richtig: <b class="sc">0</b></span></div><div class="canvas col"><div class="qcard"></div><div class="qch"></div><div class="qfb"></div></div>`;
