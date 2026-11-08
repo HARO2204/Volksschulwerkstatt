@@ -737,19 +737,19 @@ T({id:'m-ezh',fach:'M',stufen:[2,3],t:'Einer, Zehner, Hunderter',info:'Zahlen mi
   segs(st,(k,x)=>{H3=x==='1000';if(!H3)v.h=0;draw()});
   act(st,{zuf(){v={h:H3?R(1,9):0,z:R(0,9),e:R(0,9)};msg='';draw()},null(){v={h:0,z:0,e:0};msg='';draw()}});draw()}});
 
-// ===== MATHE-MIX =====
-(function(){const M=TOPICS.filter(t=>t.fach==='M'),ch=[['-','— nichts —'],...M.map(t=>[t.id,t.t])];
- T({id:'m-mix',fach:'M',stufen:[1,2,3,4],t:'Mathe-Mix',info:'Mehrere Mathe-Themen auf einem Blatt: Wähle bis zu vier Teile. Zahlenraum und andere Einstellungen kommen aus dem jeweiligen Thema.',
-  opts:[opt('t1','Teil 1',ch,'m-zr20'),opt('t2','Teil 2',ch,'m-vergleich'),opt('t3','Teil 3',ch,'m-nachbar'),opt('t4','Teil 4',ch,'-')],
-  def:{2:{t1:'m-zr100',t2:'m-einmaleins',t3:'m-zahlenstrahl'},3:{t1:'m-einmaleins',t2:'m-schriftlich',t3:'m-uhr'},4:{t1:'m-schriftlich',t2:'m-stellenwert',t3:'m-geld'}},
-  barExtra:()=>'<p class="hint" style="flex-basis:100%">Den Zahlenraum und die Art der Aufgaben stellst du im jeweiligen Thema ein (links anklicken, einstellen, zurück zum Mathe-Mix). Mit „Neue Aufgaben“ werden alle Teile neu gemischt.</p>',
-  blatt(o,s,k){const ids=[o.t1,o.t2,o.t3,o.t4].filter(x=>x&&x!=='-');if(!ids.length)return {title:'Mathe-Mix',anw:'',html:'<p style="color:#5b6578;font-size:3cqw">Wähle oben bei „Teil 1“ bis „Teil 4“ die Themen aus.</p>'};
+// ===== MIX-BLÄTTER (Mathe und Deutsch) =====
+function makeMix(id,fach,title,excl,d1,def){
+ const pool=()=>TOPICS.filter(t=>t.fach===fach&&t.id!==id&&!excl.includes(t.id)),ch=()=>[['-','— nichts —'],...pool().map(t=>[t.id,t.t])];
+ T({id,fach,stufen:[1,2,3,4],t:title,info:`Mehrere Themen auf einem Blatt: Wähle bis zu vier Teile. Die Einstellungen kommen aus dem jeweiligen Thema.`,
+  opts:[opt('t1','Teil 1',ch(),d1[0]),opt('t2','Teil 2',ch(),d1[1]),opt('t3','Teil 3',ch(),d1[2]),opt('t4','Teil 4',ch(),'-')],def,
+  barExtra:()=>'<p class="hint" style="flex-basis:100%">Einstellungen wie Zahlenraum, Regel oder Schwierigkeit stellst du im jeweiligen Thema ein (links anklicken, einstellen, zurück zum Mix). Mit „Neue Aufgaben“ werden alle Teile neu gemischt.</p>',
+  blatt(o,s,k){const ids=[o.t1,o.t2,o.t3,o.t4].filter(x=>x&&x!=='-');if(!ids.length)return {title,anw:'',html:'<p style="color:#5b6578;font-size:3cqw">Wähle oben bei „Teil 1“ bis „Teil 4“ die Themen aus.</p>'};
    const maxN=s>0.9?4:s>0.4?2:1,cut=ids.length>maxN;ids.splice(maxN);
-   const n=ids.length,sub=s>0.9?(n===1?1:n===2?0.5:0.33):s>0.4?(n===1?0.5:0.33):0.33;
-   const parts=ids.map((id,i)=>{const T0=TOPICS.find(t=>t.id===id),r=T0.blatt({...optsOf(T0,k)},sub,k);
+   const n=ids.length,subs=s>0.9?(n===1?[1]:n<=3?[1,0.5,0.33]:[0.5,0.33]):s>0.4?(n===1?[0.5,0.33]:[0.33]):[0.33],sub=subs[Math.min(S.vi||0,subs.length-1)];
+   const parts=ids.map((tid,i)=>{const T0=TOPICS.find(t=>t.id===tid),oo={...optsOf(T0,k)};if('merk' in oo&&n>1)oo.merk='n';const r=T0.blatt(oo,sub,k);
      return `<div style="display:flex;flex-direction:column;gap:1.2cqw${i?';border-top:.25cqw dashed #c7cfdd;padding-top:1.6cqw':''}"><div class="ws-sub mixh"><span style="display:inline-flex;align-items:center;justify-content:center;background:#2f5fd0;color:#fff;border-radius:.6cqw;min-width:3.2cqw;height:3.2cqw;margin-right:1cqw;font-size:2.2cqw">${String.fromCharCode(65+i)}</span>${r.anw||T0.t}</div><div style="display:flex;flex-direction:column;gap:1.6cqw">${r.html}</div></div>`});
-   return {title:'Mathe-Mix',anw:'Löse alle Aufgaben. Arbeite genau.',html:`<div style="display:flex;flex-direction:column;gap:2cqw">${parts.join('')}</div>`,hinweis:cut?(s>0.4?'Auf ½ A4 passen nur Teil 1 und 2. Für mehr Teile wähle „A4 ganz“.':'Auf ⅓ A4 passt nur Teil 1. Für mehr Teile wähle ½ A4 oder „A4 ganz“.'):''}}});
- const i=TOPICS.findIndex(t=>t.id==='m-mix'),j=TOPICS.findIndex(t=>t.fach==='M');TOPICS.splice(j,0,TOPICS.splice(i,1)[0]);})();
+   return {levels:subs.length-1,title,anw:'Löse alle Aufgaben. Arbeite genau.',html:`<div style="display:flex;flex-direction:column;gap:2cqw">${parts.join('')}</div>`,hinweis:cut?(s>0.4?'Auf ½ A4 passen nur Teil 1 und 2. Für mehr Teile wähle „A4 ganz“.':'Auf ⅓ A4 passt nur Teil 1. Für mehr Teile wähle ½ A4 oder „A4 ganz“.'):''}}});
+ const i=TOPICS.findIndex(t=>t.id===id),j=TOPICS.findIndex(t=>t.fach===fach);TOPICS.splice(j,0,TOPICS.splice(i,1)[0])}
 
 // ===== DEUTSCH =====
 T({id:'d-anlaute',fach:'D',stufen:[1],t:'Anlaute hören',info:'Den ersten Laut eines Wortes hören und den passenden Buchstaben finden.',
@@ -1757,6 +1757,8 @@ function merkBox(rules,big,f0){const f=f0||(big?3.6:2.9);return `<div style="bor
   T0.blatt=function(o,s,k){const rules=o.r==='mix2'?['ie','cktz','dopp']:[o.r];
     if(o.merk==='nur')return {title:'Merke!',anw:'Schreibe den Merksatz sauber in dein Regelheft ab.',html:merkBox(rules,s>0.9,s<0.4?(rules.length>1?1.9:2.5):0)};
     const r=b0.call(this,o,s,k);if(o.merk!=='n'&&s>0.9)r.html+=merkBox(rules,false);return r}})();
+makeMix('m-mix','M','Mathe-Mix',[],['m-zr20','m-vergleich','m-nachbar'],{2:{t1:'m-zr100',t2:'m-einmaleins',t3:'m-zahlenstrahl'},3:{t1:'m-einmaleins',t2:'m-schriftlich',t3:'m-uhr'},4:{t1:'m-schriftlich',t2:'m-stellenwert',t3:'m-geld'}});
+makeMix('d-mix','D','Deutsch-Mix',['d-eigen','d-lesen-verstehen','d-schreibschrift'],['d-anlaute','d-artikel','d-reime'],{2:{t1:'d-rechtschreibung',t2:'d-artikel',t3:'d-satzzeichen'},3:{t1:'d-rechtschreibung',t2:'d-wortarten',t3:'d-zeitformen'},4:{t1:'d-wortarten',t2:'d-zeitformen',t3:'-'}});
 /* ---------- Tafel-Helfer ---------- */
 function quizTafel(st,cfg){let it,done,miss,score=0,total=0;
   st.innerHTML=`<div class="ctl">${cfg.ctl||''}<button class="btn pri" data-a="neu">Nächste Karte</button><button class="btn" data-a="sol">Lösung</button><span class="score">richtig: <b class="sc">0</b></span></div><div class="canvas col"><div class="qcard"></div><div class="qch"></div><div class="qfb"></div></div>`;
@@ -1808,13 +1810,15 @@ function renderBar(){const t=S.topic,o=curOpts();
 let OVR={};try{OVR=JSON.parse(localStorage.getItem('vsw-ovr')||'{}')}catch(e){}
 const ovKey=()=>S.topic.id+'@'+S.stufe;
 const saveOvr=()=>{try{localStorage.setItem('vsw-ovr',JSON.stringify(OVR))}catch(e){}};
-function renderSheet(){const t=S.topic,o=curOpts(),size=S.fmt===1?1:S.fmt===2?0.5:0.33;let h='';
-  let hinweis='';try{for(let p=0;p<S.fmt;p++){rng=mulberry(S.seed);const r=t.blatt(o,size,S.stufe);hinweis=r.hinweis||'';
+function renderSheet(){S.vi=0;for(;;){const lv=renderSheetOnce(),pg=$('page');if(!lv||S.vi>=lv)break;
+  const sc=Math.min(...[...pg.querySelectorAll('.fit')].map(f=>{const z=f.style.transform;return f.dataset.over?0:z?parseFloat(z.slice(6)):1}));if(sc>=.74)break;S.vi++}}
+function renderSheetOnce(){const t=S.topic,o=curOpts(),size=S.fmt===1?1:S.fmt===2?0.5:0.33;let h='',levels=0;
+  let hinweis='';try{for(let p=0;p<S.fmt;p++){rng=mulberry(S.seed);const r=t.blatt(o,size,S.stufe);hinweis=r.hinweis||'';levels=r.levels||0;
     const head=r.bare?(r.title?`<div class="ws-title" style="padding-bottom:1cqw">${esc(r.title)}</div>`:''):`<div class="ws-head">${S.img?`<img class="ws-img" src="${S.img}" alt="">`:''}<div class="ws-tt"><div class="ws-kl">${FACH[t.fach][0]==='Vorlagen'?S.stufe+'. Klasse':FACH[t.fach][0]+' · '+S.stufe+'. Klasse'}</div><div class="ws-title" data-ed="title" contenteditable="true" spellcheck="false">${esc(OVR[ovKey()]?.title??(r.title||t.t))}</div></div><div class="ws-name">Name: <span class="ln"></span><br>Datum: <span class="ln s"></span></div></div>${(OVR[ovKey()]?.anw??r.anw)?`<div class="ws-anw" data-ed="anw" contenteditable="true" spellcheck="false">${OVR[ovKey()]?.anw!=null?esc(OVR[ovKey()].anw):r.anw}</div>`:''}`;
     h+=`<div class="part">${head}<div class="ws-body"><div class="fit">${r.html}</div></div></div>`}}
   finally{rng=Math.random}
   const pg=$('page');pg.innerHTML=h;pg.classList.toggle('show-sol',S.sol);pg.classList.toggle('compact',S.fmt>1);fitSheet(pg);FREI_OUT=null;if(t.after)t.after(pg);
-  requestAnimationFrame(()=>{const over=!!pg.querySelector('.fit[data-over="1"]');$('warn').hidden=!over&&!hinweis;$('warn').textContent=hinweis||'Achtung: Der Inhalt passt nicht ganz auf das Blatt. Wähle ein größeres Format oder weniger Aufgaben.'})}
+  requestAnimationFrame(()=>{const over=!!pg.querySelector('.fit[data-over="1"]');$('warn').hidden=!over&&!hinweis;$('warn').textContent=hinweis||'Achtung: Der Inhalt passt nicht ganz auf das Blatt. Wähle ein größeres Format oder weniger Aufgaben.'});return levels}
 function fitSheet(pg){pg.querySelectorAll('.ws-body').forEach(b=>{const f=b.firstElementChild;f.style.transform='';f.style.flex='none';f.dataset.over='';
   const br=b.getBoundingClientRect();let R=br.right;
   f.querySelectorAll('*:not(svg *)').forEach(e=>{const r=e.getBoundingClientRect();if(r.width>0&&r.right>R)R=r.right});
