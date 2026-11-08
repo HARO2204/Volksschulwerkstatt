@@ -1099,6 +1099,36 @@ const RS={
   s:['Der Frosch [qu]akt im Teich.','Die [Qu]alle schwimmt im Meer.','Ich esse ein Stück [K]uchen.','Die Tür [qu]ietscht.','Das Sofa ist be[qu]em.','Die [K]uh gibt Milch.','Wir trinken heißen [K]akao.','Im A[qu]arium schwimmen Fische.','Das [K]amel hat zwei Höcker.','Das ist doch [Qu]atsch!']},
 };
 const DTPAIR={d:'t',t:'d',b:'p',p:'b',g:'k',k:'g'};
+// ===== Schwierigere Wörter und Sätze =====
+const RS2={
+ spst:{w:['Blei-[st]ift#✏️','[St]ern-schnup-pe','[Sp]in-nen-netz#🕸️','[St]aub-sau-ger','[Sp]ring-seil','[St]a-chel-bee-re','[Sp]ül-ma-schi-ne','[St]roh-halm','Kin-der-[sp]iel','Schnee-[st]urm','[Sp]iel-zeug-au-to','[St]reich-holz','Fuß-ball-[sp]iel','[St]ra-ßen-bahn#🚋','[Sp]a-zier-gang','[St]ein-pilz'],
+  s:['Mit dem Blei[st]ift zeichne ich eine [St]ernschnuppe.','In der Ecke hängt ein großes [Sp]innennetz.','Nach dem [Sp]aziergang [st]ellen wir die [St]iefel vor die Tür.','Beim Fußball[sp]iel [sp]ringt der Ball über die [St]raße.','Im Wald finden wir einen [St]einpilz.','Der Schnee[st]urm [st]ürmt die ganze Nacht.']},
+ kqu:{w:['Kaul-[qu]ap-pe#🐸','[Qu]ell-was-ser','A-[qu]a-rell','[Qu]ar-tett','[Qu]iet-sche-en-te','[Qu]atsch-kopf','Be-[qu]em-lich-keit','[Qu]a-dra-te','[Qu]ark-spei-se','[K]ak-tus-blü-te','[K]a-rus-sell','[K]ar-tof-fel-sa-lat','[K]a-pi-tän','[K]a-ra-mell','[K]o-kos-nuss#🥥','[K]rö-te'],
+  s:['Im Teich schwimmen viele Kaul[qu]appen.','Die [Qu]ietscheente schwimmt in der Badewanne.','Der [K]apitän steuert das Schiff [qu]er über den See.','Zum Nachtisch gibt es [Qu]arkspeise mit [K]aramell.','Am [K]arussell [qu]ietscht ein Rad.','Das [Qu]ellwasser ist [k]alt und [k]lar.']},
+ ie:{w:['Sp[ie]-gel-ei','Z[ie]-gel-stein','Fl[ie]-gen-pilz#🍄','R[ie]-sen-rad#🎡','T[ie]r-gar-ten','B[ie]-nen-stock','Sch[ie]-nen-bus','W[ie]-sel','K[ie]-fer','K[i]n-der-gar-ten','Z[i]m-mer-pflan-ze','M[i]lch-glas','F[i]n-ger-ab-druck','W[i]n-ter-müt-ze','K[i]r-schen-kern','Bl[i]tz-licht'],
+  s:['Im T[ie]rgarten sehen wir v[ie]le W[ie]sel.','Der Fl[ie]genpilz ist giftig, das w[i]ssen alle K[i]nder.','Am R[ie]senrad bl[i]nken die L[i]chter.','Zum Frühstück gibt es ein Sp[ie]gelei und M[i]lch.','Die B[ie]nen fl[ie]gen in den B[ie]nenstock.']},
+ cktz:{w:['Ru[ck]-sack#🎒','Ste[ck]-do-se','Glo[ck]en-spiel','Ba[ck]-o-fen','Schne[ck]en-haus#🐌','Ze[ck]e','Hu[ck]e-pack','Bli[tz]-ab-lei-ter','Ka[tz]en-korb','Schmu[tz]-fink','Spa[tz]en-nest','Pfü[tz]en-sprin-ger','Mü[tz]en-bom-mel','Pla[tz]-re-gen','Wi[tz]-bold'],
+  s:['Im Ru[ck]sa[ck] ist meine Mü[tz]e.','Der Spa[tz] si[tz]t auf dem Glo[ck]enturm.','Beim Pla[tz]regen springen wir in jede Pfü[tz]e.','Die Schne[ck]e trägt ihr Schne[ck]enhaus.','Opa trägt mich hu[ck]epa[ck] über die Wiese.']},
+ ckk:{w:['Wol[k]en-krat-zer','Mar[k]t-platz','Zu[ck]er-wat-te','Bä[ck]e-rei','Bal[k]on','Pau[k]en-schlag','Schau[k]el-pferd','Fa[ck]el-zug','Win[k]el-mes-ser','Gur[k]en-glas','Spu[k]-schloss','Ste[ck]-brief'],
+  s:['Am Mar[k]tplatz gibt es Zu[ck]erwatte.','Auf dem Bal[k]on steht ein Schau[k]elpferd.','Der Bä[ck]er ba[ck]t frühmorgens das Brot.','Hinter der Wol[k]e versteckt sich der Wol[k]enkratzer.','Im Spu[k]schloss gibt es einen dun[k]len Gang.']},
+ tzz:{w:['Pil[z]-sup-pe','Ker[z]en-licht','Sal[z]-streu-er','Hei[z]-kör-per','Wur[z]el-zwerg','Ka[tz]en-au-ge','Pla[tz]-an-wei-ser','Tan[z]-schu-le','Kreu[z]-wort-rät-sel','Pflan[z]en-topf','Schmer[z]-ta-blet-te','Har[z]-trop-fen','Wei[z]en-feld','Sa[tz]-zei-chen'],
+  s:['Bei Ker[z]enlicht lösen wir ein Kreu[z]worträtsel.','Im Wei[z]enfeld wachsen auch Blumen.','Die Pil[z]suppe braucht noch Sal[z].','Die Ka[tz]e si[tz]t auf dem Hei[z]körper.','In der Tan[z]schule tan[z]en wir Wal[z]er.']},
+ dopp:{w:['Kaul-qua[pp]e#🐸','Ri[tt]er-burg#🏰','Schne[ll]-zug','So[nn]en-schirm#⛱️','Ko[ff]er-raum','Wa[ss]er-fall','Zi[mm]er-pflan-ze','Ta[nn]en-zap-fen','Gi-ra[ff]en-hals','Bu[tt]er-brot','Pu[pp]en-wa-gen','Ha[s]en-oh-ren','Ro[s]en-strauch','Ta[f]el-schwamm','Na[s]en-loch','O[f]en-tür','Kä[s]e-brot'],
+  s:['In der Pfütze schwimmt eine Kaulqua[pp]e.','Der Ri[tt]er wohnt in einer großen Burg.','Unter dem So[nn]enschirm e[ss]en wir ein Bu[tt]erbrot.','Der Ha[s]e hat lange Ohren.','Im Ko[ff]erraum liegt ein Ba[ll].']},
+ eu:{w:['H[eu]-schre-cke#🦗','F[eu]-er-wehr#🚒','[Eu]-ro-pa','A-bent-[eu]-er','Fr[eu]n-din','Z[eu]g-nis','Sch[eu]-ne','Un-ge-h[eu]-er','N[eu]-jahr','Ver-k[äu]-fe-rin|kaufen','H[äu]s-chen|Haus','R[äu]-ber|rauben','S[äu]-ge-tier|saugen','M[äu]-se-loch|Maus','L[äu]-fer|laufen','Tr[äu]-me-rin|Traum'],
+  s:['Die Fr[eu]ndin hat ein M[äu]seloch entdeckt.','Die F[eu]erwehr r[äu]mt die Straße.','In der Sch[eu]ne wohnen viele H[eu]schrecken.','Der R[äu]ber erlebt ein Abent[eu]er.','Die Verk[äu]ferin l[äu]tet die Glocke.']},
+ ea:{w:['G[ä]rt-ner|Garten','K[ä]lb-chen|Kalb','Gl[ä]s-chen|Glas','St[ä]d-te|Stadt','W[ä]l-der|Wald','F[ä]h-re|fahren','ge-f[ä]hr-lich|Gefahr','Er-k[ä]l-tung|kalt','W[e]t-ter-be-richt','F[e]ns-ter-bank','B[e]tt-de-cke','H[e]rbst-blatt','G[e]-burts-tag','M[e]n-schen'],
+  s:['Der G[ä]rtner arbeitet in den W[ä]ldern.','Im H[e]rbst habe ich eine Erk[ä]ltung.','Die F[ä]hre f[ä]hrt über den See.','Auf der F[e]nsterbank stehen drei Gl[ä]ser.','Das K[ä]lbchen hat heute G[e]burtstag.']},
+ ss:{w:['Fu[ß]-ball-spie-ler','Stra[ß]en-bahn','Gie[ß]-kan-ne','drau[ß]en','Spa[ß]-bad','Grü[ß]e','Wa[ss]er-ball','Schlü[ss]el-bund','Flu[ss]-u-fer','Me[ss]er-block','Kla[ss]en-zim-mer','Ki[ss]en-schlacht','Ta[ss]en-hen-kel','Schlo[ss]-gar-ten'],
+  s:['Im Kla[ss]enzimmer steht eine Gie[ß]kanne.','Drau[ß]en spielen wir mit dem Wa[ss]erball.','Am Flu[ss]ufer machen wir eine Ki[ss]enschlacht.','Die Fu[ß]ballspieler e[ss]en zu Mittag.','Den Schlü[ss]elbund habe ich verge[ss]en.']},
+ dt:{w:['Wal[d]-weg|Wälder','Han[d]-schuh|Hände','Ber[g]-hüt-te|Berge','Kor[b]-ball|Körbe','Zu[g]-füh-rer|Züge','Mon[d]-licht|Monde','Pfer[d]-stall|Pferde','Bro[t]-zeit|Brote','Ta[g]-traum|Tage','Gel[d]-bör-se|Gelder','Zwer[g]-ha-se|Zwerge','Blu[t]-trop-fen|bluten','Lau[b]-baum|belaubt','Kin[d]-heit|Kinder'],
+  s:['Auf dem Wal[d]weg finden wir eine Gel[d]börse.','In der Ber[g]hütte gibt es eine Bro[t]zeit.','Der Zwer[g]hase sitzt im Kor[b].','Der Zu[g]führer fährt bei Mon[d]licht.','Im Pfer[d]stall steht ein Kor[b] mit Heu.']}};
+Object.entries(RS2).forEach(([k,v])=>{RS[k].w2=v.w;RS[k].s2=v.s});
+const rsW=(r,lv)=>lv==='s'?RS[r].w2:lv==='m'?[...RS[r].w,...RS[r].w2]:RS[r].w;
+const rsS=(r,lv)=>lv==='s'?RS[r].s2:lv==='m'?[...RS[r].s,...RS[r].s2]:RS[r].s;
+function rsFalsch(r,p){const ch=rsChoices(r,p.target),low=p.target.toLowerCase(),alt=ch.find(c=>c!==low)||ch[0];const cap=p.target[0]!==p.target[0].toLowerCase();const a=cap?alt[0].toUpperCase()+alt.slice(1):alt;
+  const i=p.clean.indexOf(p.target);return p.clean.slice(0,i)+a+p.clean.slice(i+p.target.length)}
+
 function rsParse(str){const [main,base]=str.split('|'),[w,emo]=main.split('#');const syl=[[]];let gap=null,clean='';
   for(const ch of w){if(ch==='['){gap='';continue}if(ch===']'){syl[syl.length-1].push({g:gap});clean+=gap;gap=null;continue}if(gap!==null){gap+=ch;continue}if(ch==='-'){syl.push([]);continue}syl[syl.length-1].push({t:ch});clean+=ch}
   const target=w.match(/\[(.+?)\]/)[1];return {syl,clean,target,emo,base}}
@@ -1109,14 +1139,15 @@ function rsSent(str){return esc(str).replace(/\[(.+?)\]/g,(m,g)=>`<span class="b
 const rsHead=(rule,words)=>{const ch=RS[rule].ch;return ch?`<b>${ch.join(' oder ')}?</b>`:''};
 T({id:'d-rechtschreibung',fach:'D',stufen:[1,2,3],t:'Rechtschreibung',info:'Aufpass-Stellen üben: sp oder st, k oder qu, ie oder i, ck oder tz, doppelte Mitlaute, eu oder äu, e oder ä – in der 3. Klasse auch ck/k, tz/z, ss/ß und Auslaute (d/t, b/p, g/k).',
  opts:[opt('r','Regel',Object.entries(RS).map(([k,v])=>[k,`${v.t} (${v.k.join('./')}. Kl.)`]).concat([['mix2','gemischt: ie/i, ck/tz, Doppelmitlaut']]),'ie'),
-  opt('art','Übung',[['l','Lückenwörter'],['s','Lückensätze'],['o','Wörter sortieren'],['b','Bild: Wort aufschreiben'],['g','gemischtes Blatt']],'g'),
+  opt('art','Übung',[['l','Lückenwörter'],['s','Lückensätze'],['o','Wörter sortieren'],['b','Bild: Wort aufschreiben'],['f','Rechtschreib-Detektiv: Fehler finden'],['g','gemischtes Blatt']],'g'),
+  opt('lv','Schwierigkeit',[['l','leicht'],['m','mittel'],['s','schwer (lange und zusammengesetzte Wörter)']],'l'),
   {...opt('bogen','Silbenbögen',[['j','als Hilfe einzeichnen'],['n','selbst schwingen']],'n'),when:['l','g']}],
- blatt(o,s){const rules=o.r==='mix2'?['ie','cktz','dopp']:[o.r],R0=RS[rules[0]];
-  const pool=rules.flatMap(r=>RS[r].w.map(w=>({r,p:rsParse(w)})));
+ blatt(o,s){const rules=o.r==='mix2'?['ie','cktz','dopp']:[o.r],R0=RS[rules[0]],lv=o.lv||'l';
+  const pool=rules.flatMap(r=>rsW(r,lv).map(w=>({r,p:rsParse(w)})));
   const verw=rules.some(r=>['eu','ea','dt'].includes(r));
   const title=o.r==='mix2'?'Aufpass-Stellen':`Rechtschreibung: ${R0.t}`;
-  const lueck=N=>{const it=shuffle(pool).slice(0,N);return `<div class="g ${o.bogen==='j'?'bogen':''}" style="grid-template-columns:repeat(4,1fr);gap:4.2cqw 2.4cqw">${it.map(({r,p})=>`<div class="card" style="background:#eef2fa;border:0;padding:1.6cqw 1cqw 2.4cqw"><span style="font-size:3.1cqw;white-space:nowrap">${rsWord(p,'gap')}</span>${verw&&p.base?`<span style="font-size:2cqw;color:#5b6578;margin-top:.6cqw">kommt von: ${box(p.base,'w')}</span>`:''}${!RS[r].ch?`<span style="font-size:2cqw;color:#5b6578">${rsChoices(r,p.target).join(' oder ')}</span>`:''}</div>`).join('')}</div>`};
-  const saetze=N=>{const S2=shuffle(rules.flatMap(r=>RS[r].s)).slice(0,N);return `<div style="display:flex;flex-direction:column;gap:3cqw;font-size:3cqw">${S2.map(x=>`<div>${rsSent(x)}</div>`).join('')}</div>`};
+  const lueck=N=>{const it=shuffle(pool).slice(0,N);return `<div class="g ${o.bogen==='j'?'bogen':''}" style="grid-template-columns:repeat(${lv==='l'?4:3},1fr);gap:4.2cqw 2.4cqw">${it.map(({r,p})=>`<div class="card" style="background:#eef2fa;border:0;padding:1.6cqw 1cqw 2.4cqw"><span style="font-size:${lv==='l'?3.1:2.9}cqw;white-space:nowrap">${rsWord(p,'gap')}</span>${verw&&p.base?`<span style="font-size:2cqw;color:#5b6578;margin-top:.6cqw">kommt von: ${box(p.base,'w')}</span>`:''}${!RS[r].ch?`<span style="font-size:2cqw;color:#5b6578">${rsChoices(r,p.target).join(' oder ')}</span>`:''}</div>`).join('')}</div>`};
+  const saetze=N=>{const S2=shuffle(rules.flatMap(r=>rsS(r,lv))).slice(0,N);return `<div style="display:flex;flex-direction:column;gap:3cqw;font-size:3cqw">${S2.map(x=>`<div>${rsSent(x)}</div>`).join('')}</div>`};
   const sort=N=>{const r0=rules[0];
    if(rules.length>1)return sortTable(N,rules.map(r=>RS[r].t),({r})=>rules.indexOf(r));
    if(r0==='dopp')return sortTable(N,['einfacher Mitlaut','doppelter Mitlaut'],({p})=>p.target.length===2?1:0);
@@ -1127,8 +1158,10 @@ T({id:'d-rechtschreibung',fach:'D',stufen:[1,2,3],t:'Rechtschreibung',info:'Aufp
   const bild=N=>{const it=shuffle(pool.filter(x=>x.p.emo)).slice(0,N),g=sGeo(420,26);
    return `<div class="g" style="grid-template-columns:1fr 1fr;gap:3cqw 4cqw">${it.map(({p})=>`<div class="mrow"><span class="emo" style="font-size:5.4cqw">${p.emo}</span><div style="flex:1">${lineatur420(p.clean)}</div></div>`).join('')}</div>`};
   const head=rules.length===1&&R0.ch?`${R0.ch.join(' oder ')}? `:'';
-  if(o.art==='l')return {title,anw:`${o.bogen==='j'?'Schwinge die Wörter.':'Sprich deutlich und schwinge.'} ${head}Setze ein.${verw?' Suche ein verwandtes Wort.':''}`,html:lueck(sz(s,24,12,4))};
+  if(o.art==='l')return {title,anw:`${o.bogen==='j'?'Schwinge die Wörter.':'Sprich deutlich und schwinge.'} ${head}Setze ein.${verw?' Suche ein verwandtes Wort.':''}`,html:lueck(lv==='l'?sz(s,24,12,4):sz(s,21,9,3))};
   if(o.art==='s')return {title,anw:`${head}Setze passend ein.`,html:saetze(sz(s,10,4,2))};
+  if(o.art==='f'){const N=sz(s,14,6,3),it=shuffle(pool).slice(0,N).map(x=>({...x,bad:rng()<.5}));
+   return {title:'Rechtschreib-Detektiv',anw:'Lies genau. Ist das Wort richtig geschrieben? Kreuze an. Schreibe falsche Wörter richtig auf.',html:`<table class="t" style="font-size:${lv==='s'?2.6:2.9}cqw"><tr><th style="text-align:left">Wort</th><th style="width:11%">richtig</th><th style="width:11%">falsch</th><th style="width:38%">So ist es richtig:</th></tr>${it.map(({r,p,bad})=>`<tr><td style="text-align:left;font-weight:700;letter-spacing:.02em">${bad?rsFalsch(r,p):p.clean}</td><td>${bad?'':sol('✗')}</td><td>${bad?sol('✗'):''}</td><td>${bad?sol(p.clean):''}</td></tr>`).join('')}</table>`}}
   if(o.art==='o')return {title,anw:'Lies die Wörter. Sortiere sie in die richtige Spalte.',html:sort(sz(s,14,8,3))};
   if(o.art==='b'){const n=pool.filter(x=>x.p.emo).length;return {title,anw:'Schreibe die Wörter auf. Markiere die Aufpass-Stelle grün.',html:bild(Math.min(n,sz(s,10,4,2)))}}
   return {title,anw:`${head}Setze ein.${verw?' Suche ein verwandtes Wort.':''}`,html:lueck(sz(s,12,8,4))+(s>0.4?`<div class="ws-sub">Setze passend ein.</div>${saetze(sz(s,5,2,0))}`:'')+(s>0.9?`<div class="ws-sub">Schreibe die Wörter auf. Markiere die Aufpass-Stelle grün.</div>${bild(Math.min(4,pool.filter(x=>x.p.emo).length))}`:'')}},
