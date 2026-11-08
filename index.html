@@ -1331,9 +1331,8 @@ function dLin(h,art){if(art==='l')return `<div style="height:${h}cqw"></div>`;
   const L=art==='e'?[[82,'solid #5a6378']]:[[12,'solid #9aa3b5'],[38,'dashed #9aa3b5'],[64,'solid #2f5fd0'],[90,'solid #9aa3b5']];
   return `<div style="position:relative;height:${h}cqw">${L.map(([y,b])=>`<div style="position:absolute;left:0;right:0;top:${y}%;border-top:.13cqw ${b}"></div>`).join('')}</div>`}
 T({id:'d-diktat',fach:'D',stufen:[1,2,3,4],t:'Diktat-Woche',quer:true,info:'Wochenplan zum Üben der Lernwörter (A4 quer): Lernwörter eintippen, Aufgaben der Tage und Hinweise anpassen – fertig ist das Blatt für die Woche.',
- opts:[{...opt('txt','Lernwörter der Woche (ein Wort pro Zeile, bis zu 10)',[],'die Jacke\ndie Katze\ndie Biene\ndas Kind\ndas Bett\nder Ball'),type:'text',rows:6},
+ opts:[opt('schrift','Schrift der Lernwörter',[['d','Druckschrift'],['s','Schreibschrift'],['b','beide (Druck- und Schreibschrift)']],'d'),{...opt('txt','Lernwörter der Woche (ein Wort pro Zeile, bis zu 10)',[],'die Jacke\ndie Katze\ndie Biene\ndas Kind\ndas Bett\nder Ball'),type:'text',rows:6},
   {...opt('woche','Woche (leer lassen zum Selbst-Eintragen)',[],''),type:'line'},
-  opt('schrift','Lernwörter in',[['d','Druckschrift'],['s','Schreibschrift']],'d'),
   opt('lin','Schreibzeilen',[['v','Volksschul-Lineatur'],['e','eine Linie'],['l','leer']],'v'),
   {...opt('tage','Aufgaben der Tage (eine Zeile pro Tag, 2 bis 6 Tage)',[],DTAGE),type:'text',rows:5},
   {...opt('hinw','Hinweise unten (leer lassen für keine)',[],DHINW),type:'text',rows:3}],
@@ -1341,7 +1340,9 @@ T({id:'d-diktat',fach:'D',stufen:[1,2,3,4],t:'Diktat-Woche',quer:true,info:'Woch
   const def=dLines(DTAGE);while(D.length<2)D.push(def[D.length]);
   const n=rows.length,rh=Math.min(8.6,(HW.length?42:47)/n),nc=D.length,fw=Math.min(2.3,rh*.34),hak=/^lesen/i.test(D[0])?'gelesen':'erledigt';
   const cell='border:.13cqw solid #1d2433;margin:0 -.13cqw -.13cqw 0;box-sizing:border-box;overflow:hidden;min-width:0',wordCell=w=>{if(!w)return '';
-   if(o.schrift==='s'){const g0=sGeo(),g=sGeo(Math.max(260,tw(w,g0.fs)+24));return sSvg(g,sText(w,12,g,'solid'),`height:${Math.min(rh*.86,7).toFixed(2)}cqw;width:auto;max-width:100%`)}
+   const cur=f=>{const g0=sGeo(),g=sGeo(Math.max(260,tw(w,g0.fs)+24));return sSvg(g,sText(w,12,g,'solid'),`height:${Math.min(rh*f,7).toFixed(2)}cqw;width:auto;max-width:100%`)};
+   if(o.schrift==='s')return cur(.86);
+   if(o.schrift==='b')return `<div style="display:flex;flex-direction:column;gap:${(rh*.04).toFixed(2)}cqw;min-width:0"><div style="font-weight:800;font-size:${Math.min(1.9,rh*.24).toFixed(2)}cqw;line-height:1.05">${esc(w)}</div>${cur(.6)}</div>`;
    return `<div style="font-weight:800;font-size:${fw}cqw;line-height:1.1">${esc(w)}</div>`};
   const head=`<div style="display:flex;align-items:baseline;gap:2cqw"><div style="font-family:var(--font-d);font-weight:800;font-size:2.6cqw;line-height:1.1" data-ed="title" contenteditable="true" spellcheck="false">${esc(OVR[ovKey()]?.title??'Meine Diktat-Woche')}</div></div>
    <div style="display:flex;gap:4cqw;align-items:flex-end;font-size:1.35cqw;margin:.6cqw 0 1.4cqw"><span style="display:flex;align-items:flex-end;gap:.6cqw">Name:<span style="display:inline-block;width:26cqw;border-bottom:.12cqw solid #1d2433"></span></span><span style="display:flex;align-items:flex-end;gap:.6cqw">Woche:<span style="display:inline-block;min-width:20cqw;border-bottom:.12cqw solid #1d2433;font-weight:700;padding:0 .5cqw">${esc(o.woche||'')}</span></span><span style="margin-left:auto">${k}. Klasse</span></div>`;
