@@ -815,7 +815,7 @@ const ARTIK=BILDER.filter(b=>b[2]);
 T({id:'d-artikel',fach:'D',stufen:[1,2],t:'der, die, das',info:'Den passenden Begleiter (Artikel) zu Namenwörtern finden.',
  opts:[opt('art','Darstellung',[['b','mit Bild'],['w','nur Wort']],'b')],
  blatt(o,s){const N=sz(s,24,9,3),items=shuffle(ARTIK.filter(b=>b[0].length<=8)).slice(0,N);
-  return {anw:'Schreibe der, die oder das in das Kästchen.',html:`<div class="g" style="grid-template-columns:repeat(3,1fr);flex:1;align-content:space-evenly;column-gap:1.6cqw;font-size:2.8cqw">${items.map(b=>`<div class="mrow" style="gap:1.2cqw">${o.art==='b'?`<span class="emo" style="font-size:4.4cqw;flex:none">${b[1]}</span>`:''}<span style="white-space:nowrap;font-size:2.8cqw">${box(b[2])} ${b[0]}</span></div>`).join('')}</div>`}},
+  return {anw:'Schreibe der, die oder das in das Kästchen.',html:`<div class="g" style="grid-template-columns:repeat(3,1fr);flex:1;align-content:space-evenly;column-gap:1.6cqw;font-size:2.8cqw">${items.map(b=>`<div class="mrow" style="gap:1.2cqw">${o.art==='b'?`<span class="emo" style="font-size:4.4cqw;flex:none">${b[1]}</span>`:''}<span style="white-space:nowrap;font-size:${s<0.9?2.4:2.8}cqw">${box(b[2])} ${b[0]}</span></div>`).join('')}</div>`}},
  tafel(st){quizTafel(st,{next:()=>pick(ARTIK),front:b=>`<span class="e">${b[1]}</span><span>${b[0]}</span>`,choices:()=>['der','die','das'],correct:b=>b[2],after:b=>`${b[2]} ${b[0]}`,keep:true})}});
 
 T({id:'d-wortarten',fach:'D',stufen:[2,3,4],t:'Wortarten',info:'Namenwörter (Nomen), Zeitwörter (Verben) und Eigenschaftswörter (Adjektive) unterscheiden.',
