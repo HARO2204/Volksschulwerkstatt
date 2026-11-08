@@ -1220,9 +1220,9 @@ function satzText(t){const S2=t.match(/[^.?!]+[.?!]/g).map(x=>x.trim());
     w[0]=`<span class="cap">${f[0].toLowerCase()}${sol(f[0])}</span>${f.slice(1)}`;return w.join(' ')+`<span class="sol">${end}</span>`}).join(' ')}
 T({id:'d-satzgrenzen',fach:'D',stufen:[2,3],t:'Satzende und Satzanfang',info:'Den Satz als Sinneinheit erfassen: Satzende finden, Satzzeichen setzen, Satzanfänge großschreiben.',
  opts:[opt('art','Satzzeichen',[['p','nur Punkte'],['a','Punkt, Fragezeichen, Rufzeichen']],'p'),opt('ab','Abschreiben',[['j','mit Zeilen zum Abschreiben'],['n','ohne Zeilen']],'j')],def:{3:{art:'a'}},
- blatt(o,s){const N=sz(s,2,1,1),tx=shuffle(TEXTE[o.art]).slice(0,N),rows=o.ab==='j'?sz(s,2,2,0):0;
+ blatt(o,s){const tx=shuffle(TEXTE[o.art]).slice(0,1),big=s>0.9,rows=o.ab==='j'&&big?Math.min(6,Math.max(5,Math.ceil(tx[0].length/26))):0;
   return {anw:o.art==='p'?'Lies den Text. Finde das Ende jedes Satzes und setze einen Punkt. Stelle die Satzanfänge richtig.':'Lies. Setze die Satzzeichen und stelle die Satzanfänge richtig.',
-   html:tx.map(t=>`<div style="background:#eef2fa;border-radius:1.4cqw;padding:3.4cqw 3cqw 2.4cqw;font-size:3.3cqw;line-height:2.15;word-spacing:.5em">${satzText(t)}</div>${rows?`<div class="ws-sub">Schreibe den Text richtig ab.</div><div style="display:flex;flex-direction:column;gap:1.2cqw">${Array(rows).fill(`<div>${lineatur('','')}</div>`).join('')}</div>`:''}`).join('')}}});
+   html:tx.map(t=>`<div style="background:#eef2fa;border-radius:1.4cqw;padding:3cqw 3cqw 2cqw;font-size:3.2cqw;line-height:2.05;word-spacing:.5em">${satzText(t)}</div>${rows?`<div class="ws-sub">Schreibe den Text richtig ab.</div><div style="display:flex;flex-direction:column;gap:1.4cqw">`:o.ab==='j'?`<div class="ws-sub">Schreibe den Text richtig in dein Heft.</div>`:''}${rows?`${Array(rows).fill(`<div>${lineatur('','')}</div>`).join('')}</div>`:''}`).join('')}}});
 
 const NAMEN=['Anna','Ben','Clara','David','Emil','Fatma','Gabi','Hannah','Ivan','Jonas','Kerem','Lena','Mia','Noah','Olivia','Paul','Rosa','Sami','Tom','Uli','Vera','Xaver','Yusuf','Zoe'];
 const ABCW=['Affe','Bär','Clown','Delfin','Esel','Fuchs','Giraffe','Hase','Igel','Jaguar','Katze','Löwe','Maus','Nashorn','Otter','Pinguin','Qualle','Reh','Schaf','Tiger','Uhu','Vogel','Wal','Zebra'];
