@@ -157,6 +157,17 @@ table.t th{background:#eef2fa;font-size:2.4cqw}
 .snake{letter-spacing:.22em;font-weight:700;font-size:3cqw;background:#f3d9b0;border:.3cqw solid #b07a3a;border-radius:3cqw;padding:1.6cqw 3cqw;text-align:center;overflow-wrap:anywhere;color:#1d2433}
 .snake .sep{display:inline-block;width:0;border-left:.4cqw solid #d9432f;height:1.1em;vertical-align:middle;visibility:hidden;margin:0 .05em}.show-sol .snake .sep{visibility:visible}
 .show-sol .ring.y::after{border-radius:50%}
+.frow{cursor:text;position:relative;border-radius:.6cqw}
+.frow:hover{outline:.25cqw dashed #9aa3b5}
+.frow.on{outline:.35cqw solid #2f5fd0}
+.fed{position:absolute;left:3cqw;right:3cqw;z-index:5;background:#ffffff;border:2px solid #2f5fd0;border-radius:10px;padding:8px;box-shadow:0 6px 20px rgba(20,30,60,.25);font:15px/1.3 system-ui,sans-serif;color:#1d2433}
+.fed input{width:100%;box-sizing:border-box;font-size:18px;padding:6px 8px;border:2px solid #c7cfdd;border-radius:6px;color:#1d2433;background:#fff}
+.fmodes{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.fmodes button{font:600 13px system-ui,sans-serif;padding:5px 9px;border:1.5px solid #c7cfdd;border-radius:6px;background:#fff;color:#1d2433;cursor:pointer}
+.fmodes button.on{background:#2f5fd0;border-color:#2f5fd0;color:#fff}
+[data-ed]{outline:none;border-radius:.4cqw}
+[data-ed]:hover{outline:.2cqw dashed #9aa3b5}
+[data-ed]:focus{outline:.25cqw solid #2f5fd0;background:#f3f6fc}
 /* Tafel */
 .stage{background:var(--stage);border:2px solid var(--line);border-radius:14px;min-height:64vh;padding:16px;display:flex;flex-direction:column;gap:14px;
   font-size:clamp(18px,2vw,30px);position:relative}
@@ -226,6 +237,7 @@ table.t th{background:#eef2fa;font-size:2.4cqw}
 
 @page{size:A4;margin:0}
 @media print{
+  .fed{display:none!important}.frow,[data-ed]{outline:none!important;background:none!important}
   body{background:#fff}
   body *{visibility:hidden}
   #page,#page *{visibility:visible}
@@ -1251,16 +1263,60 @@ const WEG_AUSSAGEN=[['Die Kinder gehen zur Schule.',1],['Die Fußgängerampel ze
 
 let MC2=null;const dw=t=>{try{if(!MC2)MC2=document.createElement('canvas').getContext('2d');MC2.font="62px Andika, 'Segoe UI', Arial, sans-serif";return MC2.measureText(t).width}catch(e){return t.length*30}};
 function wrapText(txt,fits){const out=[];for(const raw of txt.split(/\n+/)){const line=raw.trim();if(!line)continue;let cur='';for(const w of line.split(/\s+/)){const t=cur?cur+' '+w:w;if(fits(t)||!cur)cur=t;else{out.push(cur);cur=w}}if(cur)out.push(cur)}return out}
+// ===== FREIES SCHREIBBLATT =====
+let FREI={rows:[]};try{const v=localStorage.getItem('vsw-frei');if(v)FREI=JSON.parse(v)}catch(e){}
+const saveFrei=()=>{try{localStorage.setItem('vsw-frei',JSON.stringify(FREI))}catch(e){}};
+const FMODE=[['v','Vorlage'],['g','Nachspuren'],['p','gepunktet'],['r','ganze Reihe'],['l','leer']];
+function drow(t,m,W){const base=`<svg viewBox="0 0 ${W} 120" style="width:100%;display:block"><rect x="0" y="45" width="${W}" height="30" fill="#eef3fb"/><line x1="0" y1="15" x2="${W}" y2="15" stroke="#9aa3b5" stroke-width="1.5"/><line x1="0" y1="45" x2="${W}" y2="45" stroke="#9aa3b5" stroke-width="1.5"/><line x1="0" y1="75" x2="${W}" y2="75" stroke="#2f5fd0" stroke-width="2.2"/><line x1="0" y1="105" x2="${W}" y2="105" stroke="#9aa3b5" stroke-width="1.5"/>`;
+  const tx=(x,str,mm)=>`<text x="${x}" y="75" font-size="62" font-family="Andika,sans-serif" xml:space="preserve" ${mm==='v'?'fill="#1d2433"':mm==='g'?'fill="#b4bccb"':'fill="none" stroke="#8f98ab" stroke-width="1.6" stroke-dasharray="3 3"'}>${esc(str)}</text>`;
+  if(!t||m==='l')return base+'</svg>';
+  if(m!=='r')return base+tx(14,t,m)+'</svg>';
+  let s=tx(14,t,'v'),x=14+dw(t)+36;while(x+dw(t)<W-10){s+=tx(x,t,'g');x+=dw(t)+36}return base+s+'</svg>'}
+function crow(t,m,g){if(!t||m==='l')return sSvg(g,'');const mode={v:'solid',g:'grau',p:'hohl'}[m];
+  if(m!=='r')return sSvg(g,sText(t,12,g,mode));
+  const w=tw(t,g.fs),gap=Math.max(16,g.X*1.2);let s=sText(t,12,g,'solid'),x=12+w+gap;while(x+w<g.W-10){s+=sText(t,x,g,'grau');x+=w+gap}return sSvg(g,s)}
+function freiGeo(o){const cur=o.schrift!=='d',W=Math.round(900/({g:1,m:.8,k:.66}[o.gr]||.8));return {cur,W,g:cur?sGeo(W):null}}
+function freiRowHTML(i,o){const {cur,W,g}=freiGeo(o),r=FREI.rows[i]||{t:'',m:'l'};return cur?crow(r.t,r.m,g):drow(r.t,r.m,W)}
+function freiSeed(o){if(FREI.seeded)return;FREI.seeded=true;const ls=(o.txt||'').split(/\n+/).map(x=>x.trim()).filter(Boolean);FREI.rows=[];
+  ls.forEach(t=>FREI.rows.push({t,m:'v'},{t,m:'g'},{t:'',m:'l'}));saveFrei()}
+function freiBlatt(o,s){freiSeed(o);const {cur,W,g}=freiGeo(o),rh=cur?g.H/g.W*90:120/W*90,gap=o.abst==='j'?rh*.45:.6,AV=sz(s,114,53,30);
+  const n=Math.max(1,Math.floor((AV+gap)/(rh+gap+.15)));while(FREI.rows.length<n)FREI.rows.push({t:'',m:'l'});
+  const hidden=FREI.rows.slice(n).some(r=>r.t&&r.m!=='l');
+  return {title:'Abschreiben',anw:'Lies genau. Spure nach und schreibe in die freien Zeilen.',
+   html:`<div class="frows" style="display:flex;flex-direction:column;gap:${gap.toFixed(2)}cqw">${Array.from({length:n},(_,i)=>`<div class="frow" data-i="${i}">${freiRowHTML(i,o)}</div>`).join('')}</div>`,
+   hinweis:hidden?'Einige beschriebene Zeilen passen in dieser Größe nicht aufs Blatt. Wähle eine kleinere Schrift oder ein größeres Format.':''}}
+function freiAfter(pg){const o=curOpts();if(o.modus!=='frei')return;let open=-1,ed=null;
+  const close=()=>{if(ed){ed.remove();ed=null}pg.querySelectorAll('.frow.on').forEach(x=>x.classList.remove('on'));open=-1};
+  const upd=i=>pg.querySelectorAll(`.frow[data-i="${i}"]`).forEach(el=>el.innerHTML=freiRowHTML(i,o));
+  const openRow=(rowEl)=>{close();const i=+rowEl.dataset.i,part=rowEl.closest('.part'),r=FREI.rows[i]||(FREI.rows[i]={t:'',m:'l'});open=i;rowEl.classList.add('on');
+   ed=document.createElement('div');ed.className='fed';
+   ed.innerHTML=`<input type="text" value="${esc(r.t)}" placeholder="Wort, Buchstabe oder Satz …" aria-label="Text für Zeile ${i+1}"><div class="fmodes">${FMODE.map(([k,l])=>`<button type="button" data-m="${k}" class="${r.m===k?'on':''}">${l}</button>`).join('')}<button type="button" data-x="copy" title="Text in die nächste Zeile kopieren">↓ kopieren</button><button type="button" data-x="close" title="Fertig">✓</button></div>`;
+   const pr=part.getBoundingClientRect(),rr=rowEl.getBoundingClientRect();ed.style.top=(rr.bottom-pr.top+2)+'px';part.appendChild(ed);
+   const inp=ed.querySelector('input');inp.focus();inp.setSelectionRange(inp.value.length,inp.value.length);
+   inp.addEventListener('input',()=>{r.t=inp.value;if(r.t&&r.m==='l'){r.m='v';ed.querySelectorAll('[data-m]').forEach(b=>b.classList.toggle('on',b.dataset.m==='v'))}saveFrei();upd(i)});
+   inp.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key==='ArrowDown'){e.preventDefault();const nx=part.querySelector(`.frow[data-i="${i+1}"]`);nx?openRow(nx):close()}else if(e.key==='ArrowUp'){e.preventDefault();const pv=part.querySelector(`.frow[data-i="${i-1}"]`);if(pv)openRow(pv)}else if(e.key==='Escape')close()});
+   ed.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+     if(b.dataset.m){r.m=b.dataset.m;ed.querySelectorAll('[data-m]').forEach(x=>x.classList.toggle('on',x===b));saveFrei();upd(i);inp.focus()}
+     else if(b.dataset.x==='copy'){const n=FREI.rows[i+1]||(FREI.rows[i+1]={t:'',m:'l'});n.t=r.t;if(n.m==='l')n.m='g';saveFrei();upd(i+1);const nx=part.querySelector(`.frow[data-i="${i+1}"]`);if(nx)openRow(nx)}
+     else close()})};
+  pg.querySelectorAll('.frow').forEach(el=>el.addEventListener('click',e=>{if(open!==+el.dataset.i)openRow(el)}));
+  FREI_OUT=e=>{if(ed&&!ed.contains(e.target)&&!e.target.closest('.frow'))close()};}
+let FREI_OUT=null;document.addEventListener('mousedown',e=>{if(FREI_OUT)FREI_OUT(e)});
+
 T({id:'d-eigen',fach:'D',stufen:[1,2,3,4],t:'Eigene Sätze',info:'Schreib deine eigenen Sätze oder Wörter – das Blatt macht daraus eine Abschreib- und Nachspurvorlage in Schreibschrift oder Druckschrift.',
- opts:[{...opt('txt','Deine Sätze oder Wörter (eine Zeile pro Satz)',[],'Heute scheint die Sonne.\nWir gehen in den Garten.\nMein Hund heißt Bello.'),type:'text',rows:4},
-  {...opt('titel','Überschrift',[],'Abschreiben'),type:'line'},
+ opts:[opt('modus','So gestaltest du das Blatt',[['frei','direkt in die Zeilen schreiben'],['auto','Sätze im Textfeld eingeben (automatisch)']],'frei'),
+  {...opt('txt','Deine Sätze oder Wörter (eine Zeile pro Satz)',[],'Heute scheint die Sonne.\nWir gehen in den Garten.\nMein Hund heißt Bello.'),type:'text',rows:4,when:['auto'],whenKey:'modus'},
   opt('schrift','Schrift',[['s','Schreibschrift'],['d','Druckschrift']],'s'),
-  opt('zeilen','Zeilen pro Satz',[['vnl','Vorlage, nachspuren, selbst schreiben'],['vn','Vorlage und nachspuren'],['vl','Vorlage und selbst schreiben'],['vll','Vorlage und 2 leere Zeilen'],['n','nur nachspuren']],'vnl'),
   opt('gr','Schriftgröße',[['g','groß'],['m','mittel'],['k','klein']],'m'),
-  opt('rest','Platz unten',[['j','mit leeren Zeilen auffüllen'],['n','frei lassen']],'j'),
-  opt('hilfe','Spurhilfe',[['grau','grau'],['hohl','gepunktet / Umriss']],'grau'),
-  opt('blatt','Blatt (bei langen Texten)',[['1','Blatt 1'],['2','Blatt 2'],['3','Blatt 3'],['4','Blatt 4']],'1')],def:{1:{schrift:'d',gr:'g'}},
- blatt(o,s){const cur=o.schrift!=='d',W=Math.round(900/({g:1,m:.8,k:.66}[o.gr]||.8)),g=sGeo(W);
+  {...opt('abst','Zeilenabstand',[['n','eng (für Texte)'],['j','mit Abstand (für Wörter)']],'n'),when:['frei'],whenKey:'modus'},
+  {...opt('zeilen','Zeilen pro Satz',[['vnl','Vorlage, nachspuren, selbst schreiben'],['vn','Vorlage und nachspuren'],['vl','Vorlage und selbst schreiben'],['vll','Vorlage und 2 leere Zeilen'],['n','nur nachspuren']],'vnl'),when:['auto'],whenKey:'modus'},
+  {...opt('rest','Platz unten',[['j','mit leeren Zeilen auffüllen'],['n','frei lassen']],'j'),when:['auto'],whenKey:'modus'},
+  {...opt('hilfe','Spurhilfe',[['grau','grau'],['hohl','gepunktet / Umriss']],'grau'),when:['auto'],whenKey:'modus'},
+  {...opt('blatt','Blatt (bei langen Texten)',[['1','Blatt 1'],['2','Blatt 2'],['3','Blatt 3'],['4','Blatt 4']],'1'),when:['auto'],whenKey:'modus'}],
+ after:freiAfter,
+ barExtra:o=>o.modus==='frei'?'<button class="btn" data-fx="leeren">Alle Zeilen leeren</button><p class="hint" style="flex-basis:100%">Klicke im Blatt auf eine Zeile und schreibe. Für jede Zeile wählst du: Vorlage, Nachspuren, gepunktet, ganze Reihe (z. B. für Buchstaben) oder leer. Mit Enter geht es in die nächste Zeile.</p>':'',
+ barAction:a=>{if(a==='leeren'){FREI.rows=FREI.rows.map(()=>({t:'',m:'l'}));FREI.seeded=true;saveFrei();renderSheet()}},def:{1:{schrift:'d',gr:'g'}},
+ blatt(o,s){if(o.modus==='frei')return freiBlatt(o,s);const cur=o.schrift!=='d',W=Math.round(900/({g:1,m:.8,k:.66}[o.gr]||.8)),g=sGeo(W);
   const fits=cur?(t=>tw(t,g.fs)<W-30):(t=>dw(t)<W-30);
   const lines=wrapText(o.txt||'',fits);
   const row=(t,m)=>cur?`<div>${sSvg(g,t?sText(t,12,g,m):'')}</div>`:`<div>${lineatur(t||'',m==='solid'?'solid':m==='none'?'':'trace',W)}</div>`;
@@ -1270,7 +1326,7 @@ T({id:'d-eigen',fach:'D',stufen:[1,2,3,4],t:'Eigene Sätze',info:'Schreib deine 
   const H=o.hilfe==='hohl'?'hohl':'grau';
   const used=mine.length*(plan.length*(rowH+.5)+GAP),extra=o.rest==='j'?Math.max(0,Math.floor((AV-used)/(rowH+.5+.6))):0;
   const html=mine.length?`<div style="display:flex;flex-direction:column;gap:${GAP}cqw">${mine.map(t=>`<div style="display:flex;flex-direction:column;gap:.5cqw">${plan.map(m=>row(m==='none'?'':t,m==='trace'?(cur?H:'trace'):m)).join('')}</div>`).join('')}${extra?`<div style="display:flex;flex-direction:column;gap:.6cqw">${Array(extra).fill(row('','none')).join('')}</div>`:''}</div>`:'<p style="color:#5b6578">Schreib oben deine Sätze in das Feld.</p>';
-  return {title:o.titel||'Abschreiben',anw:o.zeilen==='n'?'Spure die Sätze genau nach.':'Lies den Satz. Spure nach und schreibe ihn selbst in die freie Zeile.',html,
+  return {title:'Abschreiben',anw:o.zeilen==='n'?'Spure die Sätze genau nach.':'Lies den Satz. Spure nach und schreibe ihn selbst in die freie Zeile.',html,
    hinweis:pages>1?`Dein Text ist für ${pages} Blätter zu lang. Du siehst Blatt ${bi+1} von ${pages} – wähle oben bei „Blatt“ die anderen.`:''}}});
 // ===== SACHUNTERRICHT =====
 function jzSVG(){let bl='',ap='',lv='',sn='',fl='';
@@ -1727,16 +1783,21 @@ function renderBar(){const t=S.topic,o=curOpts();
   <button class="btn" id="b-neu">Neue Aufgaben</button>
   <label class="btn" style="display:inline-flex;align-items:center;cursor:pointer">Bild einfügen<input type="file" accept="image/*" id="b-img" hidden></label>${S.img?'<button class="btn" id="b-noimg">Bild entfernen</button>':''}
   ${['d-schreibschrift','d-eigen'].includes(t.id)?(SF.flip||!FONT_EMBEDDED?(SGLY?'<button class="btn" id="b-fontx" title="Gespeicherte Schulschrift aus diesem Browser entfernen">Schulschrift entfernen</button>':`<label class="btn" style="display:inline-flex;align-items:center;cursor:pointer">Schulschrift laden<input type="file" accept=".ttf,.otf,.woff" id="b-font" hidden></label>`):''):''}
+  ${t.barExtra?t.barExtra(o):''}${OVR[ovKey()]?'<button class="btn" id="b-ovr">Überschrift zurücksetzen</button>':''}
   <button class="btn" id="b-pdf">Als PDF speichern</button>
   <button class="btn pri" id="b-print">Drucken</button>
   ${['d-schreibschrift','d-eigen'].includes(t.id)&&!SGLY?'<p class="hint" style="flex-basis:100%">Hier wird eine Ersatz-Schreibschrift verwendet. Mit „Schulschrift laden“ wählst du deine Schriftdatei (.ttf) – sie bleibt nur in deinem Browser gespeichert.</p>':''}
+  <p class="hint" style="flex-basis:100%;margin:0">Tipp: Überschrift und Arbeitsauftrag kannst du direkt im Blatt anklicken und ändern.</p>
   <p class="hint" id="pdfmsg" style="flex-basis:100%">${window.self!==window.top?'Drucken ist in der Claude-Vorschau gesperrt. Speichere das Blatt als PDF und drucke die PDF – oder öffne die Werkstatt-Datei im Browser. Für ein Lösungsblatt hake „Lösungen“ an.':'Für ein Lösungsblatt hake „Lösungen“ an und speichere oder drucke noch einmal.'}</p>`}
+let OVR={};try{OVR=JSON.parse(localStorage.getItem('vsw-ovr')||'{}')}catch(e){}
+const ovKey=()=>S.topic.id+'@'+S.stufe;
+const saveOvr=()=>{try{localStorage.setItem('vsw-ovr',JSON.stringify(OVR))}catch(e){}};
 function renderSheet(){const t=S.topic,o=curOpts(),size=S.fmt===1?1:S.fmt===2?0.5:0.33;let h='';
   let hinweis='';try{for(let p=0;p<S.fmt;p++){rng=mulberry(S.seed);const r=t.blatt(o,size,S.stufe);hinweis=r.hinweis||'';
-    const head=r.bare?(r.title?`<div class="ws-title" style="padding-bottom:1cqw">${esc(r.title)}</div>`:''):`<div class="ws-head">${S.img?`<img class="ws-img" src="${S.img}" alt="">`:''}<div class="ws-tt"><div class="ws-kl">${FACH[t.fach][0]==='Vorlagen'?S.stufe+'. Klasse':FACH[t.fach][0]+' · '+S.stufe+'. Klasse'}</div><div class="ws-title">${r.title||t.t}</div></div><div class="ws-name">Name: <span class="ln"></span><br>Datum: <span class="ln s"></span></div></div>${r.anw?`<div class="ws-anw">${r.anw}</div>`:''}`;
+    const head=r.bare?(r.title?`<div class="ws-title" style="padding-bottom:1cqw">${esc(r.title)}</div>`:''):`<div class="ws-head">${S.img?`<img class="ws-img" src="${S.img}" alt="">`:''}<div class="ws-tt"><div class="ws-kl">${FACH[t.fach][0]==='Vorlagen'?S.stufe+'. Klasse':FACH[t.fach][0]+' · '+S.stufe+'. Klasse'}</div><div class="ws-title" data-ed="title" contenteditable="true" spellcheck="false">${esc(OVR[ovKey()]?.title??(r.title||t.t))}</div></div><div class="ws-name">Name: <span class="ln"></span><br>Datum: <span class="ln s"></span></div></div>${(OVR[ovKey()]?.anw??r.anw)?`<div class="ws-anw" data-ed="anw" contenteditable="true" spellcheck="false">${OVR[ovKey()]?.anw!=null?esc(OVR[ovKey()].anw):r.anw}</div>`:''}`;
     h+=`<div class="part">${head}<div class="ws-body"><div class="fit">${r.html}</div></div></div>`}}
   finally{rng=Math.random}
-  const pg=$('page');pg.innerHTML=h;pg.classList.toggle('show-sol',S.sol);pg.classList.toggle('compact',S.fmt>1);fitSheet(pg);
+  const pg=$('page');pg.innerHTML=h;pg.classList.toggle('show-sol',S.sol);pg.classList.toggle('compact',S.fmt>1);fitSheet(pg);FREI_OUT=null;if(t.after)t.after(pg);
   requestAnimationFrame(()=>{const over=!!pg.querySelector('.fit[data-over="1"]');$('warn').hidden=!over&&!hinweis;$('warn').textContent=hinweis||'Achtung: Der Inhalt passt nicht ganz auf das Blatt. Wähle ein größeres Format oder weniger Aufgaben.'})}
 function fitSheet(pg){pg.querySelectorAll('.ws-body').forEach(b=>{const f=b.firstElementChild;f.style.transform='';f.style.flex='none';f.dataset.over='';
   const br=b.getBoundingClientRect();let R=br.right;
@@ -1748,7 +1809,7 @@ function renderTafel(){clearTimers();const st=$('stage');st.innerHTML='';
   const wrap=document.createElement('div');wrap.className='ctl';wrap.style.justifyContent='flex-end';wrap.innerHTML=`<button class="btn" id="b-full">Vollbild</button>${S.topic.tafel?`<div class="seg" id="tfmode"><button data-v="i" class="${S.tfmode!=='b'?'on':''}">Übung</button><button data-v="b" class="${S.tfmode==='b'?'on':''}">Arbeitsblatt groß</button></div>`:''}`;
   const inner=document.createElement('div');inner.style.cssText='display:flex;flex-direction:column;gap:14px;flex:1;min-height:0';st.append(wrap,inner);
   if(S.topic.tafel&&S.tfmode!=='b'){S.topic.tafel(inner,{stufe:S.stufe})}
-  else{inner.innerHTML=`<div class="ctl"><button class="btn pri" id="bs-sol">Lösungen zeigen/verbergen</button><span class="hint">Das aktuelle Arbeitsblatt zum gemeinsamen Besprechen.</span></div><div class="boardsheet"><div class="page" id="bpage">${$('page').innerHTML}</div></div>`;
+  else{inner.innerHTML=`<div class="ctl"><button class="btn pri" id="bs-sol">Lösungen zeigen/verbergen</button><span class="hint">Das aktuelle Arbeitsblatt zum gemeinsamen Besprechen.</span></div><div class="boardsheet"><div class="page" id="bpage">${$('page').innerHTML.replace(/contenteditable="true"/g,'')}</div></div>`;
     let s=S.sol;$('bpage').classList.toggle('show-sol',s);$('bs-sol').onclick=()=>{s=!s;$('bpage').classList.toggle('show-sol',s)}}
   $('b-full').onclick=()=>{try{document.fullscreenElement?document.exitFullscreen():st.requestFullscreen().catch(()=>{})}catch(e){}};
   const tm=$('tfmode');if(tm)tm.onclick=e=>{const b=e.target.closest('button');if(!b)return;S.tfmode=b.dataset.v;renderTafel()}}
@@ -1766,6 +1827,10 @@ $('bar').addEventListener('change',e=>{const el=e.target;
   else if(el.id==='b-img'&&el.files[0]){const fr=new FileReader();fr.onload=()=>{S.img=fr.result;renderBar();renderSheet()};fr.readAsDataURL(el.files[0])}});
 let TXT_T=null;
 $('bar').addEventListener('input',e=>{const el=e.target;if(el.dataset.o&&(el.tagName==='TEXTAREA'||el.tagName==='INPUT')){curOpts()[el.dataset.o]=el.value;try{localStorage.setItem('vsw-'+S.topic.id+'-'+el.dataset.o,el.value)}catch(err){}clearTimeout(TXT_T);TXT_T=setTimeout(renderSheet,300)}});
+$('page').addEventListener('input',e=>{const el=e.target.closest('[data-ed]');if(!el)return;const k=el.dataset.ed,v=el.textContent;OVR[ovKey()]={...(OVR[ovKey()]||{}),[k]:v};saveOvr();
+  $('page').querySelectorAll(`[data-ed="${k}"]`).forEach(x=>{if(x!==el)x.textContent=v});if(!$('b-ovr'))renderBar()});
+$('page').addEventListener('keydown',e=>{if(e.target.closest('[data-ed]')&&e.key==='Enter'){e.preventDefault();e.target.blur()}});
+$('bar').addEventListener('click',e=>{const fx=e.target.closest('[data-fx]');if(fx&&S.topic.barAction)S.topic.barAction(fx.dataset.fx);if(e.target.id==='b-ovr'){delete OVR[ovKey()];saveOvr();renderBar();renderSheet()}});
 $('bar').addEventListener('click',e=>{if(e.target.id==='b-pdf')savePDF(e.target);if(e.target.id==='b-fontx')vergissSchrift();});
 $('bar').addEventListener('click',e=>{if(e.target.id==='b-neu'){S.seed=Date.now()%100000;renderSheet()}else if(e.target.id==='b-print'){try{window.print()}catch(err){}}else if(e.target.id==='b-noimg'){S.img=null;renderBar();renderSheet()}});
 
@@ -1784,7 +1849,7 @@ function pdfFromJpeg(jpg,w,h){const enc=new TextEncoder(),parts=[],offs=[];let l
 async function pageToCanvasFO(el,W){ // Weg 2: Blatt als SVG-Bild zeichnen (ohne Zusatzprogramm)
   const css=[...document.querySelectorAll('style')].map(x=>x.textContent).join('\n');
   const r=el.getBoundingClientRect(),w=Math.round(r.width),h=Math.round(r.height),sc=W/w;
-  const clone=el.cloneNode(true);clone.style.width=w+'px';clone.style.height=h+'px';clone.style.maxWidth='none';clone.style.margin='0';clone.style.boxShadow='none';
+  const clone=el.cloneNode(true);clone.querySelectorAll('.fed').forEach(x=>x.remove());clone.querySelectorAll('.frow.on').forEach(x=>x.classList.remove('on'));clone.style.width=w+'px';clone.style.height=h+'px';clone.style.maxWidth='none';clone.style.margin='0';clone.style.boxShadow='none';
   const xhtml=new XMLSerializer().serializeToString(clone);
   const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${w*sc}" height="${h*sc}" viewBox="0 0 ${w} ${h}"><foreignObject x="0" y="0" width="${w}" height="${h}"><div xmlns="http://www.w3.org/1999/xhtml" style="width:${w}px;height:${h}px;background:#fff"><style>${css.replace(/]]>/g,'')}</style>${xhtml}</div></foreignObject></svg>`;
   const img=new Image();img.decoding='sync';
@@ -1794,7 +1859,7 @@ async function pageToCanvasFO(el,W){ // Weg 2: Blatt als SVG-Bild zeichnen (ohne
 async function savePDF(btn){const msg=$('pdfmsg'),say=t=>{if(msg)msg.textContent=t};
   const old=btn.textContent;btn.disabled=true;btn.textContent='PDF wird erstellt …';const errs=[];
   try{const el=$('page');let cv=null;
-    if(typeof html2canvas==='function'){try{cv=await html2canvas(el,{scale:Math.min(4,2480/el.offsetWidth),backgroundColor:'#ffffff',useCORS:true,logging:false})}catch(e){errs.push('Weg 1: '+(e&&e.message||e))}}
+    if(typeof html2canvas==='function'){try{if(FREI_OUT)FREI_OUT({target:document.body});cv=await html2canvas(el,{scale:Math.min(4,2480/el.offsetWidth),backgroundColor:'#ffffff',useCORS:true,logging:false,ignoreElements:x=>x.classList&&x.classList.contains('fed')})}catch(e){errs.push('Weg 1: '+(e&&e.message||e))}}
     else errs.push('Weg 1: Hilfsprogramm nicht geladen');
     if(!cv){try{cv=await pageToCanvasFO(el,2480)}catch(e){errs.push('Weg 2: '+(e&&e.message||e))}}
     if(!cv)throw new Error(errs.join(' · '));
