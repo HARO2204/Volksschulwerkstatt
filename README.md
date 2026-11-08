@@ -10,7 +10,7 @@ Druckbare Arbeitsblätter für die Volksschule nach dem österreichischen Lehrpl
 - **Abenteuer:** Schatzkarte für die Tafel mit 10 Stationen, Lösungswort-Rätsel (Mathe und Deutsch) als Passwörter, Schatzkarte für jedes Kind, Urkunde
 - **Mathematik:** Mathe-Mix (bis zu vier Themen auf einem Blatt), Mengen, Ziffern, Zahlenhaus, Zahlenstrahl, Einer/Zehner/Hunderter, Vergleichen, Nachbarzahlen, Plus/Minus bis 20 und 100, Einmaleins, schriftliches Rechnen, Stellenwerte, Formen, Uhrzeit, Geld
 - **Deutsch:** Deutsch-Mix (bis zu vier Themen auf einem Blatt), Anlaute, Buchstaben, Silben, Reime, Lesen, der/die/das, Wortarten, Einzahl/Mehrzahl, Satzzeichen, Zeitformen, Rechtschreibung mit Merkkästen (sp/st, k/qu, ie/i, ck/tz, Doppelmitlaute, eu/äu, e/ä, ss/ß, Auslaute), Satzgrenzen, ABC, Wortschlangen, Gegensätze, zusammengesetzte Nomen, Lesen und verstehen (Lesetexte für 1.–4. Klasse, Lies und male, Unsinnssätze, Lesetreppen), Schreibschrift, eigene Sätze
-- **Sachunterricht:** Tiere im Wald (mit Fotos von 13 Waldtieren), Stabschrecken (Steckbrief, Körperteile, Lösungswort-Rätsel, Richtig oder falsch), Jahreszeiten, Wochentage und Monate, Mein Körper, Ampel und Schulweg, Bundesländer
+- **Sachunterricht:** Tiere im Wald (mit Fotos von 13 Waldtieren und ihren Wohnorten), Stabschrecken (Steckbrief, Körperteile, Lösungswort-Rätsel, Richtig oder falsch), Jahreszeiten, Wochentage und Monate, Mein Körper, Ampel und Schulweg, Bundesländer
 
 Jedes Blatt passt auf eine A4-Seite, auf Wunsch auch ½ oder ⅓ A4 (mehrfach auf einem Blatt zum Kopieren). Lösungen lassen sich einblenden. Blätter können gedruckt oder als PDF gespeichert werden. Zu jedem Thema gibt es eine Übung für die interaktive Tafel.
 
