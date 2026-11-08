@@ -1089,6 +1089,14 @@ const RS={
  dt:{t:'d oder t, b oder p, g oder k',ch:null,k:[3],
   w:['Hun[d]#🐕|Hunde','Wal[d]#🌲|Wälder','Ra[d]#🚲|Räder','Lie[d]|Lieder','Bil[d]#🖼️|Bilder','Kin[d]|Kinder','Bro[t]#🍞|Brote','Hu[t]#🎩|Hüte','Zu[g]#🚂|Züge','Ber[g]#⛰️|Berge','Kor[b]#🧺|Körbe','Die[b]|Diebe','Ta[g]|Tage','We[g]|Wege','Schran[k]|Schränke','Gel[d]|Gelder','Zwer[g]|Zwerge','lie[b]|lieber','run[d]|runder','gel[b]|gelber'],
   s:['Der Hun[d] bellt.','Im Wal[d] ist es still.','Ich fahre mit dem Ra[d].','Der Zu[g] ist pünktlich.','Wir steigen auf den Ber[g].','Das Bro[t] ist frisch.','Im Kor[b] liegen Äpfel.','Das Kin[d] lacht.']},
+ spst:{t:'sp oder st',ch:['sp','st'],k:[1,2],
+  w:['[Sp]ie-gel#🪞','[Sp]in-ne#🕷️','[Sp]ort','[Sp]iel','[sp]rin-gen','[sp]ie-len','[Sp]aß','[Sp]atz','[Sp]i-nat','[sp]itz','[Sp]ur','[Sp]ange','[sp]a-ren',
+     '[St]ern#⭐','[St]ein#🪨','[St]uhl#🪑','[St]ift#✏️','[St]adt','[St]ra-ße','[st]e-hen','[St]rumpf#🧦','[St]orch','[St]ie-fel#🥾','[st]ark','[St]all','[St]amm','[st]il-le'],
+  s:['Wir [sp]ielen im Garten.','Am Himmel leuchtet ein [St]ern.','Die [Sp]inne baut ein Netz.','Ich [st]ehe vor der Tür.','Der Hase [sp]ringt über den [St]ein.','Mein [St]ift ist [sp]itz.','Im [Sp]iegel sehe ich mich.','Der [St]orch [st]eht auf einem Bein.','Das [Sp]iel macht [Sp]aß.','Die Kuh [st]eht im [St]all.']},
+ kqu:{t:'k oder qu',ch:['k','qu'],k:[1,2],
+  w:['[Qu]al-le#🪼','[Qu]el-le','[Qu]ark','[qu]a-ken','[Qu]atsch','[Qu]a-drat#🟥','[qu]er','[Qu]iz','be-[qu]em','A-[qu]a-ri-um','[qu]iet-schen','[Qu]alm',
+     '[K]a-mel#🐫','[K]u-chen#🍰','[K]er-ze#🕯️','[K]uh#🐄','[K]i-wi#🥝','[K]ro-ne#👑','[K]a-kao','[K]ino','[K]u-gel','[K]amm','[K]a-ter'],
+  s:['Der Frosch [qu]akt im Teich.','Die [Qu]alle schwimmt im Meer.','Ich esse ein Stück [K]uchen.','Die Tür [qu]ietscht.','Das Sofa ist be[qu]em.','Die [K]uh gibt Milch.','Wir trinken heißen [K]akao.','Im A[qu]arium schwimmen Fische.','Das [K]amel hat zwei Höcker.','Das ist doch [Qu]atsch!']},
 };
 const DTPAIR={d:'t',t:'d',b:'p',p:'b',g:'k',k:'g'};
 function rsParse(str){const [main,base]=str.split('|'),[w,emo]=main.split('#');const syl=[[]];let gap=null,clean='';
@@ -1099,7 +1107,7 @@ function rsChoices(rule,target){const r=RS[rule];if(r.ch)return r.ch;const low=t
 function rsWord(p,mode){return p.syl.map(s=>`<span class="syl">${s.map(t=>t.g!==undefined?(mode==='gap'?`<span class="bx gp">${sol(t.g)}</span>`:`<b>${t.g}</b>`):t.t).join('')}</span>`).join('')}
 function rsSent(str){return esc(str).replace(/\[(.+?)\]/g,(m,g)=>`<span class="bx gp">${sol(g)}</span>`)}
 const rsHead=(rule,words)=>{const ch=RS[rule].ch;return ch?`<b>${ch.join(' oder ')}?</b>`:''};
-T({id:'d-rechtschreibung',fach:'D',stufen:[2,3],t:'Rechtschreibung',info:'Aufpass-Stellen üben: ie oder i, ck oder tz, doppelte Mitlaute, eu oder äu, e oder ä – in der 3. Klasse auch ck/k, tz/z, ss/ß und Auslaute (d/t, b/p, g/k).',
+T({id:'d-rechtschreibung',fach:'D',stufen:[1,2,3],t:'Rechtschreibung',info:'Aufpass-Stellen üben: sp oder st, k oder qu, ie oder i, ck oder tz, doppelte Mitlaute, eu oder äu, e oder ä – in der 3. Klasse auch ck/k, tz/z, ss/ß und Auslaute (d/t, b/p, g/k).',
  opts:[opt('r','Regel',Object.entries(RS).map(([k,v])=>[k,`${v.t} (${v.k.join('./')}. Kl.)`]).concat([['mix2','gemischt: ie/i, ck/tz, Doppelmitlaut']]),'ie'),
   opt('art','Übung',[['l','Lückenwörter'],['s','Lückensätze'],['o','Wörter sortieren'],['b','Bild: Wort aufschreiben'],['g','gemischtes Blatt']],'g'),
   {...opt('bogen','Silbenbögen',[['j','als Hilfe einzeichnen'],['n','selbst schwingen']],'n'),when:['l','g']}],
@@ -1124,7 +1132,7 @@ T({id:'d-rechtschreibung',fach:'D',stufen:[2,3],t:'Rechtschreibung',info:'Aufpas
   if(o.art==='o')return {title,anw:'Lies die Wörter. Sortiere sie in die richtige Spalte.',html:sort(sz(s,14,8,3))};
   if(o.art==='b'){const n=pool.filter(x=>x.p.emo).length;return {title,anw:'Schreibe die Wörter auf. Markiere die Aufpass-Stelle grün.',html:bild(Math.min(n,sz(s,10,4,2)))}}
   return {title,anw:`${head}Setze ein.${verw?' Suche ein verwandtes Wort.':''}`,html:lueck(sz(s,12,8,4))+(s>0.4?`<div class="ws-sub">Setze passend ein.</div>${saetze(sz(s,5,2,0))}`:'')+(s>0.9?`<div class="ws-sub">Schreibe die Wörter auf. Markiere die Aufpass-Stelle grün.</div>${bild(Math.min(4,pool.filter(x=>x.p.emo).length))}`:'')}},
- tafel(st){const cfg={r:'ie',ctl:seg('r',[['ie','ie/i'],['cktz','ck/tz'],['dopp','Doppel'],['eu','eu/äu'],['ea','e/ä'],['ss','ss/ß'],['dt','d/t…']],'ie'),onSeg(k,v){this.r=v},
+ tafel(st){const cfg={r:'ie',ctl:seg('r',[['spst','sp/st'],['kqu','k/qu'],['ie','ie/i'],['cktz','ck/tz'],['dopp','Doppel'],['eu','eu/äu'],['ea','e/ä'],['ss','ss/ß'],['dt','d/t…']],'ie'),onSeg(k,v){this.r=v},
   next(){return rsParse(pick(RS[this.r].w))},front:p=>`<span class="e" style="font-size:2em">${p.emo||''}</span><span style="font-size:1.6em">${p.syl.map(s=>s.map(t=>t.g!==undefined?'<span style="display:inline-block;min-width:1.2em;border-bottom:4px solid currentColor">&nbsp;</span>':t.t).join('')).join('')}</span>`,
   choices(p){return rsChoices(this.r,p.target).map(c=>p.clean.startsWith(p.target)&&p.target[0]!==p.target[0].toLowerCase()?c[0].toUpperCase()+c.slice(1):c)},correct:p=>p.target,keep:true,
   after:p=>`<span style="font-size:1.6em">${p.syl.map(s=>s.map(t=>t.g!==undefined?`<span style="color:var(--green)">${t.g}</span>`:t.t).join('')).join('<span style="color:var(--muted)">·</span>')}</span>${p.base?`<div style="font-size:.8em;color:var(--muted)">kommt von: ${p.base}</div>`:''}`};quizTafel(st,cfg)}});
@@ -1578,7 +1586,7 @@ const swNorm=w=>(w||'').toUpperCase().replace(/SS/g,'ß').replace(/ß/g,'SS').re
 T({id:'a-loesungswort',fach:'A',stufen:[1,2,3,4],t:'Lösungswort-Rätsel',info:'Jede richtige Antwort ergibt einen Buchstaben. Das Lösungswort ist das Passwort für die nächste Station der Schatzkarte.',
  opts:[opt('st','Lösungswort',[...STAT.slice(1).map(([n,w],i)=>[String(i+1),`Station ${i+2}: ${w}`]),['eigen','eigenes Wort']],'1'),
   {...opt('wort','Eigenes Lösungswort',[],'SONNE'),type:'line',when:['eigen'],whenKey:'st'},
-  opt('auf','Aufgaben',[['p10','Plus und Minus bis 10'],['p20','Plus und Minus bis 20'],['p100','Plus und Minus bis 100'],['mal','Einmaleins'],['div','Geteilt'],['art','der, die oder das'],['ie','ie oder i'],['cktz','ck oder tz'],['dopp','Doppelmitlaut'],['eu','eu oder äu'],['ea','e oder ä'],['ss','ss oder ß']],'p10')],
+  opt('auf','Aufgaben',[['p10','Plus und Minus bis 10'],['p20','Plus und Minus bis 20'],['p100','Plus und Minus bis 100'],['mal','Einmaleins'],['div','Geteilt'],['art','der, die oder das'],['ie','ie oder i'],['cktz','ck oder tz'],['dopp','Doppelmitlaut'],['eu','eu oder äu'],['ea','e oder ä'],['ss','ss oder ß'],['spst','sp oder st'],['kqu','k oder qu']],'p10')],
  def:{2:{auf:'p100'},3:{auf:'mal'},4:{auf:'div'}},
  blatt(o,s,k){if(s<0.4)return {title:'Geheimes Lösungswort',anw:'',html:`<div style="border:.3cqw dashed #d9432f;border-radius:1.4cqw;padding:3cqw;font-size:3cqw"><b>Lösungswort-Rätsel brauchen mehr Platz.</b><br>Bitte wähle oben bei „Format“ ½ A4 oder A4 ganz.</div>`,hinweis:'Lösungswort-Rätsel gibt es als A4 oder ½ A4.'};
   const raw=o.st==='eigen'?o.wort:STAT[+o.st][1],W=[...swNorm(raw)].slice(0,12);if(!W.length)W.push(...'SONNE');
@@ -1594,7 +1602,7 @@ T({id:'a-loesungswort',fach:'A',stufen:[1,2,3,4],t:'Lösungswort-Rätsel',info:'
   else{const items=[];
    if(o.auf==='art'){const pool=shuffle(ARTIK.filter(b=>b[0].length<=8));for(let i=0;i<n;i++){const b=pool[i%pool.length],ch=['der','die','das'];items.push({w:`__ ${b[0]}`,ch:ch.map(c=>[c,c===b[2]?W[i]:rest(W[i])])})}}
    else{const pool=shuffle(RS[o.auf].w.map(rsParse));for(let i=0;i<n;i++){const p=pool[i%pool.length],ch=rsChoices(o.auf,p.target);items.push({w:rsWord(p,'gap'),ch:ch.map(c=>[c,c===p.target.toLowerCase()?W[i]:rest(W[i])])})}}
-   tasks=`<div class="g" style="grid-template-columns:repeat(2,1fr);gap:${sz(s,2.2,1.2,.8)}cqw 4cqw">${items.map((t,i)=>`<div style="font-size:2.9cqw;display:flex;flex-direction:column;gap:.5cqw"><div><b style="color:#8a5a2b;display:inline-block;min-width:4.4cqw">${i+1}.</b> ${t.w}</div><div style="display:flex;gap:1.6cqw;padding-left:4.4cqw;font-size:2.5cqw">${t.ch.map(([c,l])=>`<span style="border:.22cqw solid #c7cfdd;border-radius:.8cqw;padding:.1cqw 1cqw;white-space:nowrap">${c} → <b style="color:#8a5a2b">${l}</b></span>`).join('')}</div></div>`).join('')}</div>`;
+   tasks=`<div class="g" style="grid-template-columns:repeat(2,1fr);gap:${sz(s,2.2,1.2,.8)}cqw 4cqw">${items.map((t,i)=>`<div style="font-size:2.9cqw;display:flex;flex-direction:column;gap:.5cqw"><div><b style="color:#8a5a2b;display:inline-block;min-width:4.4cqw">${i+1}.</b> ${t.w}</div><div style="display:flex;flex-wrap:wrap;gap:.6cqw 1cqw;padding-left:4.4cqw;font-size:2.3cqw">${t.ch.map(([c,l])=>`<span style="border:.22cqw solid #c7cfdd;border-radius:.8cqw;padding:.1cqw 1cqw;white-space:nowrap">${c} → <b style="color:#8a5a2b">${l}</b></span>`).join('')}</div></div>`).join('')}</div>`;
    table=`<div style="font-weight:700;font-size:2.6cqw">Welche Lösung ist richtig? Der Buchstabe daneben kommt in das Feld mit derselben Nummer.</div>`}
   const boxW=Math.min(7.4,86/n);
   const loes=`<div style="display:flex;gap:${Math.min(1.2,boxW*.15)}cqw;justify-content:center;margin-top:.6cqw">${W.map((c,i)=>`<div style="display:flex;flex-direction:column;align-items:center;gap:.4cqw"><div style="width:${boxW}cqw;height:${boxW*1.1}cqw;border:.35cqw solid #8a5a2b;border-radius:1cqw;background:#fff6dc;display:flex;align-items:center;justify-content:center;font-size:${boxW*.6}cqw;font-weight:800">${sol(c)}</div><span style="font-size:2cqw;color:#8a5a2b">${i+1}</span></div>`).join('')}</div>`;
@@ -1626,6 +1634,25 @@ T({id:'a-schatzkarte',fach:'A',stufen:[1,2,3,4],t:'Schatzkarte',info:'Die Klasse
   nm.addEventListener('input',()=>{S0.name=nm.value||'Funkel';save();card()});tk.addEventListener('change',()=>{S0.tok=tk.value;save();draw()});lo.addEventListener('input',()=>{S0.lohn=lo.value;save();card()});
   if(innerWidth<900)q('.sk-g').style.gridTemplateColumns='1fr';draw()}});
 
+const MERK={
+ ie:['Hörst du ein langes i, schreibst du meistens ie: Biene, Brief, spielen.','Hörst du ein kurzes i, schreibst du nur i: Kind, Fisch, Milch.'],
+ cktz:['Nach einem kurzen Selbstlaut schreibst du für k ein ck: Jacke, Glocke.','Nach einem kurzen Selbstlaut schreibst du für z ein tz: Katze, Mütze.'],
+ ckk:['Nach einem kurzen Selbstlaut schreibst du ck: Bäcker, Zucker.','Nach l, n, r schreibst du nur k: Bank, Wolke, stark.','Nach au, ei, eu schreibst du nur k: Pauke, Schaukel.'],
+ tzz:['Nach einem kurzen Selbstlaut schreibst du tz: Katze, Platz.','Nach l, n, r schreibst du nur z: Salz, Kerze, Herz.','Nach au, ei, eu schreibst du nur z: heizen, Kreuz.'],
+ dopp:['Nach einem kurzen Selbstlaut folgen oft zwei gleiche Mitlaute: Sonne, Teller, Suppe.','Nach einem langen Selbstlaut steht nur ein Mitlaut: Hase, Rose, Ofen.','Schwinge das Wort: Son-ne. Der Mitlaut gehört zu beiden Silben.'],
+ eu:['Gibt es ein verwandtes Wort mit au, schreibst du äu: Baum – Bäume.','Sonst schreibst du eu: Eule, heute, Freund.'],
+ ea:['Gibt es ein verwandtes Wort mit a, schreibst du ä: Ball – Bälle.','Sonst schreibst du e: Stern, Heft.'],
+ ss:['Nach einem kurzen Selbstlaut schreibst du ss: Wasser, Kasse.','Nach einem langen Selbstlaut schreibst du ß: Straße, Fuß, groß.','Nach au und ei schreibst du ß: draußen, heiß.'],
+ dt:['Am Wortende hörst du oft t, p oder k.','Verlängere das Wort, dann hörst du den richtigen Laut: Hund – Hunde, Korb – Körbe, Zug – Züge.'],
+ spst:['Am Wortanfang hörst du „schp“. Du schreibst sp: Spiel, springen.','Am Wortanfang hörst du „scht“. Du schreibst st: Stern, stehen.'],
+ kqu:['Hörst du „kw“, schreibst du qu: Qualle, quaken.','Nach q kommt immer ein u.','Hörst du nur „k“, schreibst du k: Kuh, Kamel.']};
+function merkBox(rules,big,f0){const f=f0||(big?3.6:2.9);return `<div style="border:.4cqw solid #2f9a5b;border-radius:1.6cqw;background:#f1faf4;padding:${big?3:1.8}cqw ${big?3.4:2.4}cqw;display:flex;flex-direction:column;gap:${big?2:1.1}cqw;color:#1d2433">
+  ${rules.map(r=>`<div><div style="font-family:var(--font-d);font-weight:800;font-size:${f*1.15}cqw;color:#1f6b3d">Merke: ${RS[r].t}</div>${MERK[r].map(l=>`<div style="font-size:${f}cqw;line-height:1.45;padding-left:${f*1.3}cqw;text-indent:-${f*1.3}cqw;margin-top:.5cqw">▸ ${l}</div>`).join('')}</div>`).join('')}</div>`}
+(function(){const T0=TOPICS.find(t=>t.id==='d-rechtschreibung'),b0=T0.blatt;
+  T0.opts.push(opt('merk','Merkkasten',[['u','unten auf dem Blatt'],['nur','nur Merkkasten (eigenes Blatt)'],['n','ohne']],'u'));
+  T0.blatt=function(o,s,k){const rules=o.r==='mix2'?['ie','cktz','dopp']:[o.r];
+    if(o.merk==='nur')return {title:'Merke!',anw:'Schreibe den Merksatz sauber in dein Regelheft ab.',html:merkBox(rules,s>0.9,s<0.4?(rules.length>1?1.9:2.5):0)};
+    const r=b0.call(this,o,s,k);if(o.merk!=='n'&&s>0.9)r.html+=merkBox(rules,false);return r}})();
 /* ---------- Tafel-Helfer ---------- */
 function quizTafel(st,cfg){let it,done,miss,score=0,total=0;
   st.innerHTML=`<div class="ctl">${cfg.ctl||''}<button class="btn pri" data-a="neu">Nächste Karte</button><button class="btn" data-a="sol">Lösung</button><span class="score">richtig: <b class="sc">0</b></span></div><div class="canvas col"><div class="qcard"></div><div class="qch"></div><div class="qfb"></div></div>`;
