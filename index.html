@@ -744,10 +744,11 @@ T({id:'m-ezh',fach:'M',stufen:[2,3],t:'Einer, Zehner, Hunderter',info:'Zahlen mi
   def:{2:{t1:'m-zr100',t2:'m-einmaleins',t3:'m-zahlenstrahl'},3:{t1:'m-einmaleins',t2:'m-schriftlich',t3:'m-uhr'},4:{t1:'m-schriftlich',t2:'m-stellenwert',t3:'m-geld'}},
   barExtra:()=>'<p class="hint" style="flex-basis:100%">Den Zahlenraum und die Art der Aufgaben stellst du im jeweiligen Thema ein (links anklicken, einstellen, zurück zum Mathe-Mix). Mit „Neue Aufgaben“ werden alle Teile neu gemischt.</p>',
   blatt(o,s,k){const ids=[o.t1,o.t2,o.t3,o.t4].filter(x=>x&&x!=='-');if(!ids.length)return {title:'Mathe-Mix',anw:'',html:'<p style="color:#5b6578;font-size:3cqw">Wähle oben bei „Teil 1“ bis „Teil 4“ die Themen aus.</p>'};
-   const n=ids.length,sub=n===1?s:s<0.9?0.33:n===2?0.5:n===3?0.42:0.33;
+   const maxN=s>0.9?4:s>0.4?2:1,cut=ids.length>maxN;ids.splice(maxN);
+   const n=ids.length,sub=s>0.9?(n===1?1:n===2?0.5:0.33):s>0.4?(n===1?0.5:0.33):0.33;
    const parts=ids.map((id,i)=>{const T0=TOPICS.find(t=>t.id===id),r=T0.blatt({...optsOf(T0,k)},sub,k);
      return `<div style="display:flex;flex-direction:column;gap:1.2cqw${i?';border-top:.25cqw dashed #c7cfdd;padding-top:1.6cqw':''}"><div class="ws-sub mixh"><span style="display:inline-flex;align-items:center;justify-content:center;background:#2f5fd0;color:#fff;border-radius:.6cqw;min-width:3.2cqw;height:3.2cqw;margin-right:1cqw;font-size:2.2cqw">${String.fromCharCode(65+i)}</span>${r.anw||T0.t}</div><div style="display:flex;flex-direction:column;gap:1.6cqw">${r.html}</div></div>`});
-   return {title:'Mathe-Mix',anw:'Löse alle Aufgaben. Arbeite genau.',html:`<div style="display:flex;flex-direction:column;gap:2cqw">${parts.join('')}</div>`,hinweis:s<0.9&&n>2?'Für drei oder vier Teile passt „A4 ganz“ am besten.':''}}});
+   return {title:'Mathe-Mix',anw:'Löse alle Aufgaben. Arbeite genau.',html:`<div style="display:flex;flex-direction:column;gap:2cqw">${parts.join('')}</div>`,hinweis:cut?(s>0.4?'Auf ½ A4 passen nur Teil 1 und 2. Für mehr Teile wähle „A4 ganz“.':'Auf ⅓ A4 passt nur Teil 1. Für mehr Teile wähle ½ A4 oder „A4 ganz“.'):''}}});
  const i=TOPICS.findIndex(t=>t.id==='m-mix'),j=TOPICS.findIndex(t=>t.fach==='M');TOPICS.splice(j,0,TOPICS.splice(i,1)[0]);})();
 
 // ===== DEUTSCH =====
