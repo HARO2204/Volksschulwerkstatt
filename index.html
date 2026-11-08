@@ -168,6 +168,7 @@ table.t th{background:#eef2fa;font-size:2.4cqw}
 [data-ed]{outline:none;border-radius:.4cqw}
 [data-ed]:hover{outline:.2cqw dashed #9aa3b5}
 [data-ed]:focus{outline:.25cqw solid #2f5fd0;background:#f3f6fc}
+.mixh::before{display:none!important}
 /* Tafel */
 .stage{background:var(--stage);border:2px solid var(--line);border-radius:14px;min-height:64vh;padding:16px;display:flex;flex-direction:column;gap:14px;
   font-size:clamp(18px,2vw,30px);position:relative}
@@ -735,6 +736,19 @@ T({id:'m-ezh',fach:'M',stufen:[2,3],t:'Einer, Zehner, Hunderter',info:'Zahlen mi
   on(st,'click','[data-m]',b=>{const k=b.dataset.m;if(v[k]>0)v[k]--;msg='';draw()});
   segs(st,(k,x)=>{H3=x==='1000';if(!H3)v.h=0;draw()});
   act(st,{zuf(){v={h:H3?R(1,9):0,z:R(0,9),e:R(0,9)};msg='';draw()},null(){v={h:0,z:0,e:0};msg='';draw()}});draw()}});
+
+// ===== MATHE-MIX =====
+(function(){const M=TOPICS.filter(t=>t.fach==='M'),ch=[['-','— nichts —'],...M.map(t=>[t.id,t.t])];
+ T({id:'m-mix',fach:'M',stufen:[1,2,3,4],t:'Mathe-Mix',info:'Mehrere Mathe-Themen auf einem Blatt: Wähle bis zu vier Teile. Zahlenraum und andere Einstellungen kommen aus dem jeweiligen Thema.',
+  opts:[opt('t1','Teil 1',ch,'m-zr20'),opt('t2','Teil 2',ch,'m-vergleich'),opt('t3','Teil 3',ch,'m-nachbar'),opt('t4','Teil 4',ch,'-')],
+  def:{2:{t1:'m-zr100',t2:'m-einmaleins',t3:'m-zahlenstrahl'},3:{t1:'m-einmaleins',t2:'m-schriftlich',t3:'m-uhr'},4:{t1:'m-schriftlich',t2:'m-stellenwert',t3:'m-geld'}},
+  barExtra:()=>'<p class="hint" style="flex-basis:100%">Den Zahlenraum und die Art der Aufgaben stellst du im jeweiligen Thema ein (links anklicken, einstellen, zurück zum Mathe-Mix). Mit „Neue Aufgaben“ werden alle Teile neu gemischt.</p>',
+  blatt(o,s,k){const ids=[o.t1,o.t2,o.t3,o.t4].filter(x=>x&&x!=='-');if(!ids.length)return {title:'Mathe-Mix',anw:'',html:'<p style="color:#5b6578;font-size:3cqw">Wähle oben bei „Teil 1“ bis „Teil 4“ die Themen aus.</p>'};
+   const n=ids.length,sub=n===1?s:s<0.9?0.33:n===2?0.5:n===3?0.42:0.33;
+   const parts=ids.map((id,i)=>{const T0=TOPICS.find(t=>t.id===id),r=T0.blatt({...optsOf(T0,k)},sub,k);
+     return `<div style="display:flex;flex-direction:column;gap:1.2cqw${i?';border-top:.25cqw dashed #c7cfdd;padding-top:1.6cqw':''}"><div class="ws-sub mixh"><span style="display:inline-flex;align-items:center;justify-content:center;background:#2f5fd0;color:#fff;border-radius:.6cqw;min-width:3.2cqw;height:3.2cqw;margin-right:1cqw;font-size:2.2cqw">${String.fromCharCode(65+i)}</span>${r.anw||T0.t}</div><div style="display:flex;flex-direction:column;gap:1.6cqw">${r.html}</div></div>`});
+   return {title:'Mathe-Mix',anw:'Löse alle Aufgaben. Arbeite genau.',html:`<div style="display:flex;flex-direction:column;gap:2cqw">${parts.join('')}</div>`,hinweis:s<0.9&&n>2?'Für drei oder vier Teile passt „A4 ganz“ am besten.':''}}});
+ const i=TOPICS.findIndex(t=>t.id==='m-mix'),j=TOPICS.findIndex(t=>t.fach==='M');TOPICS.splice(j,0,TOPICS.splice(i,1)[0]);})();
 
 // ===== DEUTSCH =====
 T({id:'d-anlaute',fach:'D',stufen:[1],t:'Anlaute hören',info:'Den ersten Laut eines Wortes hören und den passenden Buchstaben finden.',
@@ -1768,7 +1782,8 @@ function feldTafel(st,rows){const max=rows*10;let a,b,op='+',zu=false,k=-1,note=
 /* ---------- App ---------- */
 const S={stufe:1,topic:null,view:'ab',opts:{},fmt:1,sol:false,seed:Date.now()%100000,img:null};
 const $=id=>document.getElementById(id);
-function curOpts(){const t=S.topic,key=t.id+'@'+S.stufe;if(!S.opts[key]){const o={};t.opts.forEach(x=>{o[x.id]=x.d;if(x.type){try{const v=localStorage.getItem('vsw-'+t.id+'-'+x.id);if(v!==null)o[x.id]=v}catch(e){}}});Object.assign(o,(t.def||{})[S.stufe]||{});S.opts[key]=o}return S.opts[key]}
+function optsOf(t,k){const key=t.id+'@'+k;if(!S.opts[key]){const o={};t.opts.forEach(x=>{o[x.id]=x.d;if(x.type){try{const v=localStorage.getItem('vsw-'+t.id+'-'+x.id);if(v!==null)o[x.id]=v}catch(e){}}});Object.assign(o,(t.def||{})[k]||{});S.opts[key]=o}return S.opts[key]}
+function curOpts(){return optsOf(S.topic,S.stufe)}
 function renderKlassen(){$('klassen').innerHTML=[1,2,3,4].map(k=>`<button class="pill" data-k="${k}" aria-pressed="${k===S.stufe}">${k}. Klasse</button>`).join('')}
 function renderSide(){let h='';for(const f of ['V','A','M','D','S']){const list=TOPICS.filter(t=>t.fach===f&&t.stufen.includes(S.stufe)),plan=(GEPLANT[S.stufe]||{})[f]||[];
   h+=`<div class="grp"><h3><i style="background:${FACH[f][1]}"></i>${FACH[f][0]}</h3><ul>${list.map(t=>`<li><button class="tp" data-t="${t.id}" aria-current="${S.topic&&S.topic.id===t.id}">${t.t}</button></li>`).join('')}${plan.map(p=>`<li><span class="tp plan">${p}<small>geplant</small></span></li>`).join('')}</ul></div>`}

@@ -8,7 +8,7 @@ Druckbare Arbeitsblätter für die Volksschule nach dem österreichischen Lehrpl
 
 - **Vorlagen:** leere Lineaturen (1., 2., 3./4. Klasse), einfache Zeilen, Kästchen, mit Malfeld; Konzentrationstankstellen (12 Karten zum Ausdrucken und für die Tafel)
 - **Abenteuer:** Schatzkarte für die Tafel mit 10 Stationen, Lösungswort-Rätsel (Mathe und Deutsch) als Passwörter, Schatzkarte für jedes Kind, Urkunde
-- **Mathematik:** Mengen, Ziffern, Zahlenhaus, Zahlenstrahl, Einer/Zehner/Hunderter, Vergleichen, Nachbarzahlen, Plus/Minus bis 20 und 100, Einmaleins, schriftliches Rechnen, Stellenwerte, Formen, Uhrzeit, Geld
+- **Mathematik:** Mathe-Mix (bis zu vier Themen auf einem Blatt), Mengen, Ziffern, Zahlenhaus, Zahlenstrahl, Einer/Zehner/Hunderter, Vergleichen, Nachbarzahlen, Plus/Minus bis 20 und 100, Einmaleins, schriftliches Rechnen, Stellenwerte, Formen, Uhrzeit, Geld
 - **Deutsch:** Anlaute, Buchstaben, Silben, Reime, Lesen, der/die/das, Wortarten, Einzahl/Mehrzahl, Satzzeichen, Zeitformen, Rechtschreibung mit Merkkästen (sp/st, k/qu, ie/i, ck/tz, Doppelmitlaute, eu/äu, e/ä, ss/ß, Auslaute), Satzgrenzen, ABC, Wortschlangen, Gegensätze, zusammengesetzte Nomen, Lesen und verstehen (Lesetexte für 1.–4. Klasse, Lies und male, Unsinnssätze, Lesetreppen), Schreibschrift, eigene Sätze
 - **Sachunterricht:** Jahreszeiten, Wochentage und Monate, Mein Körper, Ampel und Schulweg, Bundesländer
 
